@@ -18,6 +18,16 @@ namespace WebDientesitos.Controllers
             return View();
         }
 
+        public IActionResult Nosotros()
+        {
+            return View();
+        }
+
+        public IActionResult Servicios()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
