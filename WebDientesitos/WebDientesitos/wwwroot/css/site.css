@@ -1,18 +1,104 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+    font-family: "Open Sans", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+nav {
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+    nav .logo {
+        float: left;
+    }
+
+        nav .logo img {
+            height: 40px;
+            margin: 10px;
+        }
+
+    nav ul {
+        list-style: none;
+        margin: auto;
+        padding: inherit;
+        display: flex;
+    }
+
+        nav ul li {
+            margin: 0 10px;
+        }
+
+            nav ul li a {
+                color: #535353;
+                text-decoration: none;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+
+        nav ul:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+    nav .login-button {
+        background-color: #434343;
+        border: none;
+        color: #FFFFFF;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        margin-left: -100px;
+        margin-right: 20px;
+    }
+
+footer {
+  background-color: #f1f1f1;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.contact-info, .map {
+  flex-basis: 45%;
+  text-align: left;
+}
+
+.contact-info h4, .map h4 {
+  margin-top: 0;
+}
+
+.map iframe {
+  border: none;
+  width: 75%;
+  height: 50%;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-wrap: wrap;
+  }
+
+  .contact-info, .map {
+    flex-basis: 100%;
+    margin-bottom: 20px;
+  }
 }
