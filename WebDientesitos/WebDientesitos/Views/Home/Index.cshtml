@@ -1,29 +1,8 @@
-﻿<head>
-    <link rel="stylesheet" href="~/css/HomeStyle.css">
-</head>
-<body>
-    <main>
-        <section class="hero">
-            <h1>Consultorio Dientesitos</h1>
-            <p>Ofrecemos servicios de alta calidad para el cuidado de tus dientes.</p>
-            <a asp-area="" asp-controller="Cita" asp-action="Index" class="cta">Agenda tu cita ahora</a>
-        </section>
-        <section class="services">
-            <h2>Nuestros servicios</h2>
-            <ul>
-                <li>
-                    <h3>Exámenes dentales</h3>
-                    <p>Realizamos exámenes completos para evaluar la salud dental de nuestros pacientes.</p>
-                </li>
-                <li>
-                    <h3>Limpiezas dentales</h3>
-                    <p>Utilizamos las últimas técnicas para realizar limpiezas dentales de alta calidad.</p>
-                </li>
-                <li>
-                    <h3>Tratamientos de ortodoncia</h3>
-                    <p>Ofrecemos tratamientos de ortodoncia personalizados para conseguir la sonrisa perfecta.</p>
-                </li>
-            </ul>
-        </section>
-    </main>
-</body>
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
