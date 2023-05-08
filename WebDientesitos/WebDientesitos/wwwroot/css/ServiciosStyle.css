@@ -1,0 +1,50 @@
+﻿.service {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+    height: 300px;
+    margin: 20px;
+    overflow: hidden;
+}
+
+    .service img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .service .name {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    .service-description {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        text-align: justify-all;
+        font-size: 20px;
+        font-weight: bold;
+        padding-top: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        z-index: 1;
+    }
+
+    .service:hover .service-description {
+        opacity: 1;
+    }
