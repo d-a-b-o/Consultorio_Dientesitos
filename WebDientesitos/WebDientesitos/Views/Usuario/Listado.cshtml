@@ -1,0 +1,38 @@
+﻿@model Usuario
+<head>
+    <link rel="stylesheet" href="~/css/RegistroStyle.css">
+</head>
+<body>
+    <main>
+        <section>
+            <h1>Datos del usuario</h1>
+            <form>
+                <div>
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" value="@Model.nombre" required>
+                </div>
+                <div>
+                    <label for="apellidos">Apellidos:</label>
+                    <input type="text" id="apellidos" name="apellidos" value="@Model.apellidos" required>
+                </div>
+                <div>
+                    <label for="correo">Correo electrónico:</label>
+                    <input type="email" id="correo" name="correo" value="@Model.correo" required>
+                </div>
+                <div>
+                    <label for="celular">Celular:</label>
+                    <input type="tel" id="celular" name="celular" value="@Model.celular" required>
+                </div>
+                <div>
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" value="@Model.contrasena" required>
+                </div>
+                <div>
+                    <label for="dni">DNI:</label>
+                    <input type="text" id="dni" name="dni" value="@Model.dni" required>
+                </div>
+                <button type="submit" id="editar">Editar datos</button>
+            </form>
+        </section>
+    </main>
+</body>
