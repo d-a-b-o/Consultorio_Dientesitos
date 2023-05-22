@@ -13,26 +13,26 @@ namespace WebDientesitos.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Inicio()
         {
+            ViewBag.CurrentPage = "Inicio";
             return View();
         }
-
         public IActionResult Nosotros()
         {
+            ViewBag.CurrentPage = "Nosotros";
             return View();
         }
-
         public IActionResult Servicios()
         {
+            ViewBag.CurrentPage = "Servicios";
             return View();
         }
-
-        public IActionResult Privacy()
+        public IActionResult Cita()
         {
+            ViewBag.CurrentPage = "Cita";
             return View();
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

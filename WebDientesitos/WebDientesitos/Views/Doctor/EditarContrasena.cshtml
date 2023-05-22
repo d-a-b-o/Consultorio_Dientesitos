@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "LayoutDoctor";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Contraseña</h1>
+
+        <form asp-controller="Doctor" asp-action="EditarContrasena" method="post">
+            <div class="form-group">
+                <label for="nuevaContrasena">Nueva Contraseña</label>
+                <input type="password" class="form-control" name="contrasena" id="nuevaContrasena">
+            </div>
+
+            <div class="form-group">
+                <label for="confirmarContrasena">Confirmar Nueva Contraseña</label>
+                <input type="password" class="form-control" name="contrasenaConfi" id="confirmarContrasena">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            @if (ViewData["Mensaje"] != null)
+            {
+                @if (ViewData["Mensaje"].Equals("tamaño"))
+                {
+                    <div class="form-group">
+                        <div class="alert alert-danger" role="alert">
+                            La contraseña debe contener un mínimo de 8 caracteres.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <div class="alert alert-danger" role="alert">
+                            Las contraseñas no coninciden.
+                        </div>
+                    </div>
+                }
+            }
+        </form>
+    </div>
+
+</body>

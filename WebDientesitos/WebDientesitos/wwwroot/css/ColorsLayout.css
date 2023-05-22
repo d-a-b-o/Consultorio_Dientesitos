@@ -1,0 +1,80 @@
+﻿body {
+    background-color: #F2F4F8;
+    color: #35495E;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.navbar {
+    background-color: #35495E;
+}
+
+.navbar-brand img {
+    height: 40px;
+    width: auto;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #FFFFFF;
+    margin-right: 10px;
+}
+
+    .navbar-dark .navbar-nav .nav-link:hover {
+        color: #A9DAD6;
+    }
+
+.navbar-nav .nav-link {
+    color: #FFFFFF;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #A9DAD6;
+    }
+
+    .navbar-nav .nav-link.active {
+        background-color: #E74C3C;
+        border-color: #E74C3C;
+        color: #FFFFFF;
+    }
+
+        .navbar-nav .nav-link.active:hover {
+            background-color: #D64535;
+            border-color: #D64535;
+            color: #FFFFFF;
+        }
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.btn-primary {
+    background-color: #E74C3C;
+    border-color: #E74C3C;
+}
+
+    .btn-primary:hover {
+        background-color: #D64535;
+        border-color: #D64535;
+    }
+
+.footer .contact-icons a {
+    color: white;
+    text-decoration: none;
+}
+
+    .footer .contact-icons a:hover {
+        color: lightgray;
+    }
+
+.footer .contact-icons .fab,
+.footer .contact-icons .far {
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.footer .contact-icons .contact-label {
+    font-size: 14px;
+}

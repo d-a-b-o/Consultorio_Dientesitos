@@ -1,0 +1,30 @@
+﻿@model WebDientesitos.Models.Paciente;
+@{
+    Layout = "LayoutPaciente";
+}
+<body>
+    <h1>Bienvenido @Model.Nombre @Model.ApellidoPaterno</h1>
+
+    <div class="container">
+        <div class="card-deck">
+            <a class="card btn" asp-controller="Paciente" asp-action="VerCitas">
+                <div class="card-body">
+                    <h5 class="card-title">Citas</h5>
+                    <p class="card-text">Aqui podrá ver las citas que tiene reservadas y reservar nuevas.</p>
+                </div>
+            </a>
+            <a class="card btn" asp-controller="Paciente" asp-action="VerHistorial">
+                <div class="card-body">
+                    <h5 class="card-title">Historial</h5>
+                    <p class="card-text">Aqui podrá ver su historial de citas y su historial médico.</p>
+                </div>
+            </a>
+            <a class="card btn" asp-controller="Paciente" asp-action="EditarPerfil">
+                <div class="card-body">
+                    <h5 class="card-title">Editar Perfil</h5>
+                    <p class="card-text">Aquí podra editar su perfil.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>

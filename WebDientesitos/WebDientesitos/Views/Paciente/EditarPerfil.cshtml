@@ -1,0 +1,53 @@
+﻿@model WebDientesitos.Models.Paciente
+@{
+    Layout = "LayoutPaciente";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Perfil</h1>
+
+        <form asp-controller="Paciente" asp-action="EditarPerfil" method="post">
+            <div class="form-group">
+                <label for="documento">Documento</label>
+                <input type="text" class="form-control" id="documento" asp-for="Documento" value="@Model.Documento" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" asp-for="Nombre" value="@Model.Nombre" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellidoPaterno">Apellido Paterno</label>
+                <input type="text" class="form-control" id="apellidoPaterno" asp-for="ApellidoPaterno" value="@Model.ApellidoPaterno" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellidoMaterno">Apellido Materno</label>
+                <input type="text" class="form-control" id="apellidoMaterno" asp-for="ApellidoMaterno" value="@Model.ApellidoMaterno" required>
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" class="form-control" id="correo" asp-for="Direccion" value="@Model.Direccion" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" class="form-control" id="telefono" asp-for="Telefono" value="@Model.Telefono" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input type="number" class="form-control" id="edad" asp-for="Edad" value="@Model.Edad" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a class="btn btn-primary" asp-controller="Paciente" asp-action="EditarContrasena" >Editar Contraseña</a>
+        </form>
+    </div>
+
+</body>

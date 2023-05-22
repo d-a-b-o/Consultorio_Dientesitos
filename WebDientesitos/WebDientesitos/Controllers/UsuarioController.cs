@@ -1,33 +1,78 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 using WebDientesitos.Models;
-using WebDientesitos.Service;
+using WebDientesitos.Service.Interface;
+
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace WebDientesitos.Controllers
 {
     public class UsuarioController : Controller
     {
-        private readonly IUsuario _iusuario;
+        private readonly IUsuario _usuario;
         public UsuarioController(IUsuario usuario)
         {
-            _iusuario = usuario;
-            if (_iusuario.getSize() == 0)
-            {
-                _iusuario.primerAdmin();
-            }
+            _usuario = usuario;
         }
-        public IActionResult Index()
+        public IActionResult IniciarSesion()
         {
             return View();
         }
-        public IActionResult Listado(Usuario usuario)
+        [HttpPost]
+        public IActionResult IniciarSesion(String rol, String dni, String contrasena)
         {
-            _iusuario.Add(usuario);
-            return View(usuario);
+            contrasena = _usuario.convertirSha256(contrasena);
+            if (rol.Equals("doctor"))
+            {
+                Doctor docTemp = _usuario.validarDoctor(dni, contrasena);
+                if(docTemp != null)
+                {
+                    List<Claim> claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, dni)
+                    };
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    AuthenticationProperties properties = new AuthenticationProperties()
+                    {
+                        AllowRefresh = true
+                    };
+                    HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        properties);
+                    return RedirectToAction("MenuDoctor", "Doctor");
+                }
+            }
+            else
+            {
+                Paciente pacienteTemp = _usuario.validarPaciente(dni, contrasena);
+                if(pacienteTemp != null)
+                {
+                    List<Claim> claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, dni)
+                    };
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    AuthenticationProperties properties = new AuthenticationProperties()
+                    {
+                        AllowRefresh = true
+                    };
+                    HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        properties);
+                    return RedirectToAction("MenuPaciente", "Paciente");
+                }
+            }
+            ViewData["Mensaje"] = "No se encontraron coincidencias";
+            return View();
         }
-        public IActionResult MenuUsuario(Usuario usuario)
+        public IActionResult CerrarSesion()
         {
-            Usuario user = _iusuario.getUser(usuario.dni);
-            return View(user);
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Inicio", "Home");
         }
     }
 }
