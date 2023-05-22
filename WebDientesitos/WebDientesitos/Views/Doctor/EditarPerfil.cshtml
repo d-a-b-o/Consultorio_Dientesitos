@@ -1,0 +1,48 @@
+﻿@model WebDientesitos.Models.Doctor
+@{
+    Layout = "LayoutDoctor";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Perfil</h1>
+
+        <form asp-controller="Doctor" asp-action="EditarPerfil" method="post">
+            <div class="form-group">
+                <label for="documento">Dni</label>
+                <input type="text" class="form-control" id="documento" asp-for="Dni" value="@Model.Dni" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="especialidad">Especialidad</label>
+                <input type="text" class="form-control" id="especialidad" value="@Model.Especialidad" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" asp-for="Nombre" value="@Model.Nombre" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellidoPaterno">Apellido Paterno</label>
+                <input type="text" class="form-control" id="apellidoPaterno" asp-for="ApellidoPaterno" value="@Model.ApellidoPaterno" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellidoMaterno">Apellido Materno</label>
+                <input type="text" class="form-control" id="apellidoMaterno" asp-for="ApellidoMaterno" value="@Model.ApellidoMaterno" required>
+            </div>
+
+            <div class="form-group">
+                <label for="numeroColegioMedico">Número de Colegio Médico</label>
+                <input type="text" class="form-control" id="numeroColegioMedico" asp-for="NumeroColegioMedico" value="@Model.NumeroColegioMedico" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a class="btn btn-primary" asp-controller="Doctor" asp-action="EditarContrasena">Editar Contraseña</a>
+        </form>
+    </div>
+
+</body>

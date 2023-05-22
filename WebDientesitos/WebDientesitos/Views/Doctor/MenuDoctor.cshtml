@@ -1,0 +1,33 @@
+﻿@model WebDientesitos.Models.Doctor;
+@{
+    Layout = "LayoutDoctor";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<body>
+    <h1>Bienvenido Dr. @Model.Nombre @Model.ApellidoPaterno</h1>
+
+    <div class="container">
+        <div class="card-deck">
+            <a class="card btn" asp-controller="Doctor" asp-action="VerPacientes">
+                <div class="card-body">
+                    <h5 class="card-title">Pacientes</h5>
+                    <p class="card-text">Aqui podrá ver a los pacientes con los que esté trabajando y tambien podrá registrar nuevos pacientes.</p>
+                </div>
+            </a>
+            <a class="card btn" asp-controller="Doctor" asp-action="VerCitas">
+                <div class="card-body">
+                    <h5 class="card-title">Citas</h5>
+                    <p class="card-text">Aqui podrá ver las citas que tiene reservadas y reservar nuevas.</p>
+                </div>
+            </a>
+            <a class="card btn" asp-controller="Doctor" asp-action="EditarPerfil">
+                <div class="card-body">
+                    <h5 class="card-title">Editar Perfil</h5>
+                    <p class="card-text">Aquí podra editar su perfil.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>

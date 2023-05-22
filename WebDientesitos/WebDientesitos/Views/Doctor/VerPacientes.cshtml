@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "LayoutDoctor";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<a class="card btn" asp-controller="Doctor" asp-action="RegistrarPaciente">
+    <div class="card-body">
+        <h5 class="card-title">Registrar Paciente</h5>
+        <p class="card-text">Aquí podrá registrar un nuevo paciente.</p>
+    </div>
+</a>
+@if (!string.IsNullOrEmpty(ViewBag.AlertMessage))
+{
+    <div class="alert alert-info">
+        @ViewBag.AlertMessage
+    </div>
+}
