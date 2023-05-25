@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/WebDientesitos/WebDientesitos/Models/DientesitosC.cs
