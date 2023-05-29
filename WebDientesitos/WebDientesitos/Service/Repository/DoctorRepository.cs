@@ -30,9 +30,63 @@ namespace WebDientesitos.Service.Repository
             conexion.Update(docEdit);
             conexion.SaveChanges();
         }
-        public IEnumerable<Paciente> getAllPacientes()
+        public void editCita(CitaDental cita)
         {
-            throw new NotImplementedException();
+            conexion.Update(cita);
+            conexion.SaveChanges();
+        }
+        public CitaDental getCita(int IDCita)
+        {
+            return (from Cita in conexion.CitaDentals
+                    where Cita.Idcita == IDCita
+                    select Cita).Single();
+        }
+        public List<CitaDental> getCitasP(int IdPaciente)
+        {
+            return (from Citas in conexion.CitaDentals
+                    where Citas.Idpaciente == IdPaciente
+                    select Citas).ToList();
+        }
+        public CitaSimple getCitasPaciente(int IdPaciente)
+        {
+            CitaSimple lst = new CitaSimple();
+            return null;
+        }
+        public IEnumerable<Paciente> getAllPacientes(int IdDoctor)
+        {
+            List<Paciente> lstPacientes = new List<Paciente>();
+            List<Paciente> pacientes = conexion.Pacientes.ToList();
+            bool check = false;
+            foreach(Paciente paciente in pacientes)
+            {
+                List<CitaDental> lstCitas = getCitasP(paciente.Idpaciente);
+                foreach(CitaDental cita in lstCitas)
+                {
+                    if(cita.Iddoctor == IdDoctor)
+                    {
+                        check = true;
+                        break;
+                    }
+                }
+                if (check)
+                {
+                    lstPacientes.Add(paciente);
+                }
+                check = false;
+            }
+            return lstPacientes;
+        }
+        public IEnumerable<CitaDental> getCitas(int IdDoctor)
+        {
+            return (from Citas in conexion.CitaDentals
+                    where Citas.Iddoctor == IdDoctor
+                    select Citas).ToList();
+        }
+        public Paciente getPaciente(int IDPaciente)
+        {
+            return (from Paciente in conexion.Pacientes
+                    where Paciente.Idpaciente == IDPaciente
+                    select Paciente).Single();
         }
         public void addPaciente(Paciente paciente)
         {
