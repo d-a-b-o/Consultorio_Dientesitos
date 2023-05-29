@@ -1,0 +1,77 @@
+﻿@model WebDientesitos.Models.DatosCita
+@{
+    Layout = "LayoutPaciente";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Cita</h1>
+        @if (ViewData["Mensaje"] != null)
+        {
+            <div class="form-group">
+                <div class="alert alert-danger" role="alert">
+                    Editar la fecha de la cita a menos de 7 días de la misma, conlleva a una penalización.
+                </div>
+            </div>
+        }
+        <form asp-controller="Paciente" asp-action="ReservarCita" method="post">
+            <div class="form-group">
+                <label for="sede">Sede</label>
+                <select class="form-control" name="sedeCod">
+                    <option value="@Model.citaDental.Idsede">@Model.citaDental.IdsedeNavigation.Direccion</option>
+                    @foreach (Sede item in Model.Sedes)
+                    {
+                        if (item.Idsede != Model.citaDental.Idsede)
+                        {
+                            <option value="@item.Idsede">@item.Direccion</option>
+                            
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="servicio">Servicio a Tratar</label>
+                <select class="form-control" name="tratamientoCod">
+                    <option value="@Model.citaDental.Idtratamiento">@Model.citaDental.IdtratamientoNavigation.Nombre</option>
+                    @foreach (Tratamiento item in Model.Tratamientos)
+                    {
+                        if (item.Idtratamiento != @Model.citaDental.Idtratamiento)
+                        {
+                            <option value="@item.Idtratamiento">@item.Nombre</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="doctor">Doctor</label>
+                <select class="form-control" name="doctorCod">
+                    <option value="@Model.citaDental.Iddoctor">@Model.citaDental.IddoctorNavigation.Nombre @Model.citaDental.IddoctorNavigation.ApellidoPaterno</option>
+                    @foreach (Doctor item in Model.Doctors)
+                    {
+                        if(item.Iddoctor != Model.citaDental.Iddoctor)
+                        {
+                            <option value="@item.Iddoctor">@item.Nombre</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="horario">Fecha</label>
+                <input type="date" class="form-control" name="fecha" value="@Model.citaDental.Fecha">
+            </div>
+
+            <div class="form-group">
+                <label for="horario">Hora</label>
+                <input type="time" class="form-control" name="hora" value="@Model.citaDental.Hora">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Editar</button>
+            <a class="btn btn-primary" asp-action="CancelarCita" asp-route-IDCita="@Model.citaDental.Idcita">Cancelar Cita</a>
+        </form>
+    </div>
+</body>

@@ -23,6 +23,27 @@ namespace WebDientesitos.Controllers
         [HttpPost]
         public IActionResult IniciarSesion(String rol, String dni, String contrasena)
         {
+            if(contrasena.Length == 7)
+            {
+                Paciente pacienteTemp = _usuario.validarPaciente(dni, contrasena);
+                if (pacienteTemp != null)
+                {
+                    List<Claim> claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, dni)
+                    };
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    AuthenticationProperties properties = new AuthenticationProperties()
+                    {
+                        AllowRefresh = true
+                    };
+                    HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        properties);
+                    return RedirectToAction("EditarContrasena", "Paciente");
+                }
+            }
             contrasena = _usuario.convertirSha256(contrasena);
             if (rol.Equals("doctor"))
             {

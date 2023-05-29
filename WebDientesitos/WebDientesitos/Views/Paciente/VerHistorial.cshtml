@@ -1,6 +1,33 @@
-﻿@{
+﻿@model IEnumerable<WebDientesitos.Models.DatosVerCitas>
+@{
     Layout = "LayoutPaciente";
 }
 <head>
     <link rel="stylesheet" href="~/css/PintarBoton.css">
 </head>
+<div class="container">
+    <h1>Historial de Citas</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tratamiento</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Más información</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DatosVerCitas item in Model)
+            {
+                <tr>
+                    <td>@item.Tratamiento.Nombre</td>
+                    <td>@item.Fecha</td>
+                    <td>@item.Hora</td>
+                    <td>@item.Estado</td>
+                    <td><a class="btn btn-primary" asp-controller="Paciente" asp-action="InfoCita" asp-route-IDCita="@item.IDCita">Más Información</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
