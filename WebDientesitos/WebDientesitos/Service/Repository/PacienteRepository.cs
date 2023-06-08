@@ -149,6 +149,7 @@ namespace WebDientesitos.Service.Repository
             datos.Sedes = conexion.Sedes;
             datos.Tratamientos = conexion.Tratamientos;
             datos.citaDental = getCitaDental(idCita);
+            datos.fecha = DateOnly.Parse(datos.citaDental.Fecha.ToString().Substring(0, 10));
             return datos;
         }
         public bool CompararFechas(DateTime fechaIngresada)

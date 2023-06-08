@@ -101,12 +101,12 @@ namespace WebDientesitos.Controllers
             return View(_paciente.getDatosCita(citaId));
         }
         [HttpPost]
-        public IActionResult EditarCita(CitaDental citaEdit)
+        public IActionResult EditarCita(int citaId,DateTime fecha, TimeSpan hora)
         {
-            CitaDental citaOrigin = _paciente.getCitaDental(citaEdit.Idcita);
-            citaOrigin.Fecha = citaEdit.Fecha;
-            citaOrigin.Hora = citaEdit.Hora;
-            _paciente.editCita(citaOrigin);
+            CitaDental citaEdit = _paciente.getCitaDental(citaId);
+            citaEdit.Fecha = fecha;
+            citaEdit.Hora = hora;
+            _paciente.editCita(citaEdit);
             return RedirectToAction("EditarCita", citaEdit.Idcita);
         }
         public IActionResult CancelarCita(int IDCita)

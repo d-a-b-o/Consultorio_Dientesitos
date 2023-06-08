@@ -6,5 +6,6 @@
         public IEnumerable<Tratamiento> Tratamientos { get; set; }
         public IEnumerable<Sede> Sedes { get; set; }
         public CitaDental citaDental { get; set; }
+        public DateOnly fecha {  get; set; }
     }
 }

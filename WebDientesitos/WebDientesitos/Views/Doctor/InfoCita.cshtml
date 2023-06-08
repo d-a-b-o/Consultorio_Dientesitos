@@ -10,7 +10,7 @@
 
     <h2>Detalles de la cita</h2>
     <ul>
-        <li><strong>Sede: </strong>@Model.Idsede</li>
+        <li><strong>Sede: </strong>@Model.IdsedeNavigation.Direccion</li>
         <li><strong>Fecha: </strong>@Model.Fecha</li>
         <li><strong>Hora: </strong>@Model.Hora</li>
         <li><strong>Duración: </strong>@Model.Duracion</li>
@@ -20,9 +20,9 @@
 
     <h2>Tratamiento</h2>
     <ul>
-        <li><strong>Nombre: </strong>@Model.Idtratamiento</li>
-        <li><strong>Descripción: </strong>@Model.Idtratamiento</li>
+        <li><strong>Nombre: </strong>@Model.IdtratamientoNavigation.Nombre</li>
+        <li><strong>Descripción: </strong>@Model.IdtratamientoNavigation.Descripcion</li>
     </ul>
 
-    <a class="btn btn-primary" asp-controller="Doctor" asp-action="MasInfoPacientes" asp-route-IDCita="@Model.Idcita">Finalizar Cita</a>
+    <a class="btn btn-primary" asp-controller="Doctor" asp-action="FinalizarCita" asp-route-IDCita="@Model.Idcita">Finalizar Cita</a>
 </body>

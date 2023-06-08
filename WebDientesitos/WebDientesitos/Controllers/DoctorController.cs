@@ -44,12 +44,11 @@ namespace WebDientesitos.Controllers
             ViewBag.CurrentPage = "VerPacientes";
             paciente.Estado = 1;
             paciente.Constrasena = _doctor.generarClaveTemp();
-            //String cuerpo = _doctor.mensajeClave(paciente);
-            //_doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
-            TempData["Mensaje"] = paciente.Constrasena;
+            String cuerpo = _doctor.mensajeClave(paciente);
+            _doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
             paciente.Constrasena = paciente.Constrasena;
             _doctor.addPaciente(paciente);
-            return RedirectToAction("VerPacientes","Doctor");
+            return RedirectToAction("VerPacientes");
         }
         public IActionResult VerCitas()
         {
