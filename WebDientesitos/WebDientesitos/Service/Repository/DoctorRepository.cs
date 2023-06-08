@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -37,9 +38,12 @@ namespace WebDientesitos.Service.Repository
         }
         public CitaDental getCita(int IDCita)
         {
-            return (from Cita in conexion.CitaDentals
-                    where Cita.Idcita == IDCita
-                    select Cita).Single();
+            return conexion.CitaDentals
+                    .Include(c => c.IdtratamientoNavigation)
+                    .Include(c => c.IdsedeNavigation)
+                    .Include(c => c.IdpacienteNavigation)
+                    .Where(c => c.Idcita == IDCita)
+                    .Single();
         }
         public List<CitaDental> getCitasP(int IdPaciente)
         {
@@ -78,15 +82,18 @@ namespace WebDientesitos.Service.Repository
         }
         public IEnumerable<CitaDental> getCitas(int IdDoctor)
         {
-            return (from Citas in conexion.CitaDentals
-                    where Citas.Iddoctor == IdDoctor
-                    select Citas).ToList();
+            return conexion.CitaDentals
+                    .Include(c => c.IdtratamientoNavigation)
+                    .Where(c => c.Iddoctor == IdDoctor)
+                    .Where(c => c.Estado != 3 && c.Estado != 4)
+                    .ToList();
         }
         public Paciente getPaciente(int IDPaciente)
         {
-            return (from Paciente in conexion.Pacientes
-                    where Paciente.Idpaciente == IDPaciente
-                    select Paciente).Single();
+            return conexion.Pacientes
+                    .Include(c => c.CitaDentals)
+                    .Where(c => c.Idpaciente == IDPaciente)
+                    .Single();
         }
         public void addPaciente(Paciente paciente)
         {
@@ -95,25 +102,19 @@ namespace WebDientesitos.Service.Repository
         }
         public void EnviarCorreo(String destinatario, String asunto, String cuerpo)
         {
-            // Configuración del cliente SMTP
-            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587)
+            var cliente = new SmtpClient("smtp.gmail.com", 587)
             {
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("DientesitosWeb@gmail.com", "PREISF03C1M"),
-                EnableSsl = true
+                Credentials = new NetworkCredential("dientesitosweb@gmail.com", "yfqyatlzgvclibrw")
             };
 
-            // Crear el mensaje de correo electrónico
-            MailMessage mailMessage = new MailMessage
-            {
-                From = new MailAddress("DientesitosWeb@gmail.com"),
-                Subject = asunto,
-                Body = cuerpo
-            };
-            mailMessage.To.Add(new MailAddress(destinatario));
-
-            // Enviar el correo electrónico
-            smtpClient.Send(mailMessage);
+            var email = new MailMessage("dientesitosweb@gmail.com", destinatario);
+            email.Subject = asunto;
+            email.Body = cuerpo;
+            email.IsBodyHtml = false;
+            cliente.Send(email);
         }
         public String generarClaveTemp()
         {

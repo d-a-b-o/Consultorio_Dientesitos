@@ -17,6 +17,7 @@
         <thead>
             <tr>
                 <th>Tratamiento</th>
+                <th>Paciente</th>
                 <th>Fecha</th>
                 <th>Hora</th>
                 <th>Estado</th>
@@ -29,7 +30,8 @@
                 if (item.Estado == 0 || item.Estado == 1)
                 {
                     <tr>
-                        <td>@item.Idtratamiento</td>
+                        <td>@item.IdtratamientoNavigation.Nombre</td>
+                        <td>@item.IdpacienteNavigation.Nombre @item.IdpacienteNavigation.ApellidoPaterno</td>
                         <td>@item.Fecha</td>
                         <td>@item.Hora</td>
                         @switch (item.Estado)
@@ -41,7 +43,7 @@
                                 <td>Pagada</td>
                                 break;
                         }
-                        <td><a class="btn btn-primary" asp-controller="Doctor" asp-action="InfoCita" asp-route-IDCita="@item.Idcita">Más Información</a></td>
+                        <td><a class="btn btn-primary" asp-action="InfoCita" asp-route-IDCita="@item.Idcita">Más Información</a></td>
                     </tr>
                 }
             }

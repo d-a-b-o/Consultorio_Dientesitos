@@ -16,53 +16,25 @@
                 </div>
             </div>
         }
-        <form asp-controller="Paciente" asp-action="ReservarCita" method="post">
+        <form asp-controller="Paciente" asp-action="EditarCita" asp-route-citaId="@Model.citaDental.Idcita" method="post">
             <div class="form-group">
                 <label for="sede">Sede</label>
-                <select class="form-control" name="sedeCod">
-                    <option value="@Model.citaDental.Idsede">@Model.citaDental.IdsedeNavigation.Direccion</option>
-                    @foreach (Sede item in Model.Sedes)
-                    {
-                        if (item.Idsede != Model.citaDental.Idsede)
-                        {
-                            <option value="@item.Idsede">@item.Direccion</option>
-                            
-                        }
-                    }
-                </select>
+                <textareatype type="text" class="form-control">@Model.citaDental.IdsedeNavigation.Direccion</textareatype>
             </div>
 
             <div class="form-group">
                 <label for="servicio">Servicio a Tratar</label>
-                <select class="form-control" name="tratamientoCod">
-                    <option value="@Model.citaDental.Idtratamiento">@Model.citaDental.IdtratamientoNavigation.Nombre</option>
-                    @foreach (Tratamiento item in Model.Tratamientos)
-                    {
-                        if (item.Idtratamiento != @Model.citaDental.Idtratamiento)
-                        {
-                            <option value="@item.Idtratamiento">@item.Nombre</option>
-                        }
-                    }
-                </select>
+                <textareatype type="text" class="form-control">@Model.citaDental.IdtratamientoNavigation.Nombre</textareatype>
             </div>
 
             <div class="form-group">
                 <label for="doctor">Doctor</label>
-                <select class="form-control" name="doctorCod">
-                    <option value="@Model.citaDental.Iddoctor">@Model.citaDental.IddoctorNavigation.Nombre @Model.citaDental.IddoctorNavigation.ApellidoPaterno</option>
-                    @foreach (Doctor item in Model.Doctors)
-                    {
-                        if(item.Iddoctor != Model.citaDental.Iddoctor)
-                        {
-                            <option value="@item.Iddoctor">@item.Nombre</option>
-                        }
-                    }
-                </select>
+                <textareatype type="text" class="form-control">@Model.citaDental.IddoctorNavigation.Nombre @Model.citaDental.IddoctorNavigation.ApellidoPaterno</textareatype>
             </div>
 
             <div class="form-group">
-                <label for="horario">Fecha</label>
-                <input type="date" class="form-control" name="fecha" value="@Model.citaDental.Fecha">
+                <label for="fecha">Fecha</label>
+                <input type="date" class="form-control" name="fecha" min="@Model.fecha.AddDays(7).ToString("yyyy-MM-dd")" value="@Model.fecha.ToString("yyyy-MM-dd")">
             </div>
 
             <div class="form-group">
