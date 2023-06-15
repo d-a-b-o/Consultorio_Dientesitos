@@ -3,19 +3,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WebDientesitos</title>
-    <link rel="stylesheet" href="~/css/ColorsLayout.css">
-    <script src="https://kit.fontawesome.com/2c8627ff3e.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="~/css/StyleLayout.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/2c8627ff3e.js" crossorigin="anonymous"></script>
     <link rel="icon" type="image/svg" href="~/images/Dientesito.svg">
+  
 </head>
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-md fixed-top navbar-ligth bg-ligth">
+          <div class="container-fluid">
             <a class="navbar-brand" asp-controller="Home" asp-action="Inicio">
                 <img src="~/images/Dientesito.svg" alt="Logo del consultorio">
             </a>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            <div class="collapse navbar-collapse " id="navbarNav" >
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link @(ViewBag.CurrentPage == "Inicio" ? "active rounded" : "")" asp-controller="Home" asp-action="Inicio">Inicio</a>
                     </li>
@@ -37,6 +43,7 @@
                     </li>
                 </ul>
             </div>
+          </div>
         </nav>
     </header>
 
@@ -46,7 +53,7 @@
         </main>
     </div>
 
-    <footer class="footer bg-dark text-white">
+    <footer class="footer  text-white">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 text-left">
