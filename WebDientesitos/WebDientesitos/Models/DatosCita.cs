@@ -7,5 +7,6 @@
         public IEnumerable<Sede> Sedes { get; set; }
         public CitaDental citaDental { get; set; }
         public DateOnly fecha {  get; set; }
+        public CitaSinUser citaSinUser { get; set; }
     }
 }

@@ -19,8 +19,10 @@ namespace WebDientesitos.Service.Repository
             String dni = "";
             if (claimDoctor.Identity.IsAuthenticated)
             {
-                dni = claimDoctor.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier)
-                    .Select(c => c.Value).SingleOrDefault();
+                dni = claimDoctor.Claims
+                    .Where(c => c.Type == ClaimTypes.NameIdentifier)
+                    .Select(c => c.Value)
+                    .SingleOrDefault();
             }
             return (from Doctor in conexion.Doctors
                     where Doctor.Dni == dni
@@ -44,6 +46,11 @@ namespace WebDientesitos.Service.Repository
                     .Include(c => c.IdpacienteNavigation)
                     .Where(c => c.Idcita == IDCita)
                     .Single();
+        }
+        public void RegistrarCita(CitaDental cita)
+        {
+            conexion.CitaDentals.Add(cita);
+            conexion.SaveChanges();
         }
         public List<CitaDental> getCitasP(int IdPaciente)
         {
@@ -80,10 +87,19 @@ namespace WebDientesitos.Service.Repository
             }
             return lstPacientes;
         }
+        public DatosCitaDoctor getDatosCita(int idDoctor)
+        {
+            DatosCitaDoctor data = new DatosCitaDoctor();
+            data.Tratamientos = conexion.Tratamientos;
+            data.Pacientes = getAllPacientes(idDoctor).Where(c => c.Estado == 1);
+            data.Sedes = conexion.Sedes;
+            return data;
+        }
         public IEnumerable<CitaDental> getCitas(int IdDoctor)
         {
             return conexion.CitaDentals
                     .Include(c => c.IdtratamientoNavigation)
+                    .Include(c => c.IdpacienteNavigation)
                     .Where(c => c.Iddoctor == IdDoctor)
                     .Where(c => c.Estado != 3 && c.Estado != 4)
                     .ToList();
@@ -98,6 +114,11 @@ namespace WebDientesitos.Service.Repository
         public void addPaciente(Paciente paciente)
         {
             conexion.Pacientes.Add(paciente);
+            conexion.SaveChanges();
+        }
+        public void updatePaciente(Paciente paciente)
+        {
+            conexion.Update(paciente);
             conexion.SaveChanges();
         }
         public void EnviarCorreo(String destinatario, String asunto, String cuerpo)

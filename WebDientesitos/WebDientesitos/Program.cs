@@ -16,6 +16,9 @@ builder.Services
 builder.Services
     .Add(new ServiceDescriptor(typeof(IPaciente),
         new PacienteRepository()));
+builder.Services
+    .Add(new ServiceDescriptor(typeof(ICita),
+        new CitaRepository()));
 
 builder.Services.AddControllersWithViews();
 

@@ -16,6 +16,10 @@
         <li><strong>Correo electrónico: </strong>@Model.Direccion</li>
         <li><strong>Teléfono: </strong>@Model.Telefono</li>
         <li><strong>Edad: </strong>@Model.Edad</li>
+        @if(Model.Estado == 0)
+        {
+            <a class="btn btn-primary" asp-action="RegistrarPacienteInvitado" asp-route-IdPaciente="@Model.Idpaciente">Crear cuenta paciente</a>
+        }
     </ul>
 
     <h2>Historial de Citas</h2>

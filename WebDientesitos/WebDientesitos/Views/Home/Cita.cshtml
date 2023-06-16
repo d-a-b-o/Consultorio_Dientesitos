@@ -1,75 +1,80 @@
-﻿<head>
+﻿@model WebDientesitos.Models.DatosCita
+<head>
     <link rel="stylesheet" href="~/css/PintarBoton.css">
 </head>
 <body>
     <div class="container">
         <h1>Reservar Cita</h1>
 
-        <form>
+        <form asp-controller="Home" asp-action="ConfirmacionCita" method="post">
             <div class="form-group">
                 <label for="dni">DNI</label>
-                <input type="text" class="form-control" id="dni" placeholder="Ingrese su DNI">
+                <input type="text" class="form-control" id="dni" placeholder="Ingrese su DNI" asp-for="citaSinUser.DniPaciente">
             </div>
 
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre">
+                <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre" asp-for="citaSinUser.NombrePaciente">
             </div>
 
             <div class="form-group">
                 <label for="apellidoPaterno">Apellido Paterno</label>
-                <input type="text" class="form-control" id="apellidoPaterno" placeholder="Ingrese su apellido paterno">
+                <input type="text" class="form-control" id="apellidoPaterno" placeholder="Ingrese su apellido paterno" asp-for="citaSinUser.ApellidoPaternoPaciente">
             </div>
 
             <div class="form-group">
                 <label for="apellidoMaterno">Apellido Materno</label>
-                <input type="text" class="form-control" id="apellidoMaterno" placeholder="Ingrese su apellido materno">
+                <input type="text" class="form-control" id="apellidoMaterno" placeholder="Ingrese su apellido materno" asp-for="citaSinUser.ApellidoMaternoPaciente">
             </div>
 
             <div class="form-group">
                 <label for="correo">Correo Electrónico</label>
-                <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo electrónico">
+                <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo electrónico" asp-for="citaSinUser.CorreoPaciente">
             </div>
 
             <div class="form-group">
                 <label for="celular">Celular</label>
-                <input type="tel" class="form-control" id="celular" placeholder="Ingrese su número de celular">
+                <input type="tel" class="form-control" id="celular" placeholder="Ingrese su número de celular" asp-for="citaSinUser.CelularPaciente">
             </div>
 
             <div class="form-group">
                 <label for="sede">Sede</label>
-                <select class="form-control" id="sede">
-                    <option value="1">Sede 1</option>
-                    <option value="2">Sede 2</option>
-                    <option value="3">Sede 3</option>
+                <select class="form-control" name="idSede" asp-for="citaSinUser.IdSede">
+                    @foreach (Sede item in Model.Sedes)
+                    {
+                        <option value="@item.Idsede">@item.Direccion</option>
+                    }
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="servicio">Servicio a Tratar</label>
-                <select class="form-control" id="servicio">
-                    <option value="1">Servicio 1</option>
-                    <option value="2">Servicio 2</option>
-                    <option value="3">Servicio 3</option>
+                <select class="form-control" name="idTratamiento" asp-for="citaSinUser.IdTratamiento">
+                    @foreach (Tratamiento item in Model.Tratamientos)
+                    {
+                        <option value="@item.Idtratamiento">@item.Nombre</option>
+                    }
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="doctor">Doctor</label>
-                <select class="form-control" id="doctor">
-                    <option value="1">Doctor 1</option>
-                    <option value="2">Doctor 2</option>
-                    <option value="3">Doctor 3</option>
+                <select class="form-control" name="idDoctor" asp-for="citaSinUser.IdDoctor">
+                    @foreach (Doctor item in Model.Doctors)
+                    {
+                        <option value="@item.Iddoctor">@item.Nombre @item.ApellidoPaterno</option>
+                    }
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="horario">Horario Disponible</label>
-                <select class="form-control" id="horario">
-                    <option value="1">Horario 1</option>
-                    <option value="2">Horario 2</option>
-                    <option value="3">Horario 3</option>
-                </select>
+                <label for="horario">Fecha</label>
+                <input type="date" class="form-control" name="citaSinUser.Fecha" min="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" max="@DateTime.Now.AddDays(37).ToString("yyyy-MM-dd")" asp-for="citaSinUser.Fecha">
+            </div>
+
+            <div class="form-group">
+                <label for="horario">Hora</label>
+                <input type="time" class="form-control" name="citaSinUser.Hora" asp-for="citaSinUser.Hora">
             </div>
 
             <button type="submit" class="btn btn-primary">Reservar</button>

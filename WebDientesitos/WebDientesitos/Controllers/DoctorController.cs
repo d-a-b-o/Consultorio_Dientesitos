@@ -33,6 +33,18 @@ namespace WebDientesitos.Controllers
         {
             return View(_doctor.getPaciente(IDPaciente));
         }
+        public IActionResult RegistrarPacienteInvitado(int IdPaciente)
+        {
+            ViewBag.CurrentPage = "VerPacientes";
+            Paciente paciente = _doctor.getPaciente(IdPaciente);
+            paciente.Estado = 1;
+            paciente.Constrasena = _doctor.generarClaveTemp();
+            String cuerpo = _doctor.mensajeClave(paciente);
+            _doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
+            paciente.Constrasena = paciente.Constrasena;
+            _doctor.updatePaciente(paciente);
+            return RedirectToAction("VerPacientes"); ;
+        }
         public IActionResult RegistrarPaciente()
         {
             ViewBag.CurrentPage = "VerPacientes";
@@ -65,6 +77,29 @@ namespace WebDientesitos.Controllers
             CitaDental cita = _doctor.getCita(IDCita);
             cita.Estado = 2;
             _doctor.editCita(cita);
+            return RedirectToAction("VerCitas");
+        }
+        public IActionResult ReservarCita()
+        {
+            Doctor doc = _doctor.getDoctor(HttpContext);
+            return View(_doctor.getDatosCita(doc.Iddoctor));
+        }
+        [HttpPost]
+        public IActionResult ReservarCita(int idTratamiento, int idPaciente, int idSede, DateTime fecha, TimeSpan hora)
+        {
+            CitaDental cita = new CitaDental();
+            Doctor doc = _doctor.getDoctor(HttpContext);
+            cita.Idtratamiento = idTratamiento;
+            cita.Iddoctor = doc.Iddoctor;
+            cita.Idpaciente = idPaciente;
+            cita.Idsede = idSede;
+            cita.Fecha = fecha;
+            cita.Hora = hora;
+            cita.Duracion = 30;
+            cita.ImportePagar = 300;
+            cita.Estado = 0;
+
+            _doctor.RegistrarCita(cita);
             return RedirectToAction("VerCitas");
         }
         public IActionResult EditarPerfil()

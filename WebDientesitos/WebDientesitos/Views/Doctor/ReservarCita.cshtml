@@ -1,6 +1,6 @@
-﻿@model WebDientesitos.Models.DatosCita
+﻿@model WebDientesitos.Models.DatosCitaDoctor
 @{
-    Layout = "LayoutPaciente";
+    Layout = "LayoutDoctor";
 }
 <head>
     <link rel="stylesheet" href="~/css/PintarBoton.css">
@@ -9,10 +9,10 @@
     <div class="container">
         <h1>Reservar Cita</h1>
 
-        <form asp-controller="Paciente" asp-action="ReservarCita" method="post">
+        <form asp-controller="Doctor" asp-action="ReservarCita" method="post">
             <div class="form-group">
                 <label for="sede">Sede</label>
-                <select class="form-control" name="sedeCod">
+                <select class="form-control" name="idSede">
                     @foreach (Sede item in Model.Sedes)
                     {
                         <option value="@item.Idsede">@item.Direccion</option>
@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label for="servicio">Servicio a Tratar</label>
-                <select class="form-control" name="tratamientoCod">
+                <select class="form-control" name="idTratamiento">
                     @foreach (Tratamiento item in Model.Tratamientos)
                     {
                         <option value="@item.Idtratamiento">@item.Nombre</option>
@@ -31,23 +31,23 @@
             </div>
 
             <div class="form-group">
-                <label for="doctor">Doctor</label>
-                <select class="form-control" name="doctorCod">
-                    @foreach(Doctor item in Model.Doctors)
+                <label for="paciente">Pacientre</label>
+                <select class="form-control" name="idPaciente">
+                    @foreach (Paciente item in Model.Pacientes)
                     {
-                        <option value="@item.Iddoctor">@item.Nombre @item.ApellidoPaterno</option>
+                        <option value="@item.Idpaciente">@item.Nombre @item.ApellidoPaterno</option>
                     }
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="horario">Fecha</label>
-                <input type="date" class="form-control" name="fecha" min="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" max="@DateTime.Now.AddDays(37).ToString("yyyy-MM-dd")">
+                <input type="date" class="form-control" name="citaSinUser.Fecha" min="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" max="@DateTime.Now.AddDays(37).ToString("yyyy-MM-dd")" >
             </div>
 
             <div class="form-group">
                 <label for="horario">Hora</label>
-                <input type="time" class="form-control" name="hora">
+                <input type="time" class="form-control" name="citaSinUser.Hora" >
             </div>
 
             <button type="submit" class="btn btn-primary">Reservar</button>

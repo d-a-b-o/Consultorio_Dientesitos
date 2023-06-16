@@ -69,7 +69,7 @@ namespace WebDientesitos.Controllers
             else
             {
                 Paciente pacienteTemp = _usuario.validarPaciente(dni, contrasena);
-                if(pacienteTemp != null)
+                if(pacienteTemp != null && pacienteTemp.Estado == 1)
                 {
                     List<Claim> claims = new List<Claim>()
                     {
