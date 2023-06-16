@@ -1,0 +1,70 @@
+﻿@model WebDientesitos.Models.Paciente
+@{
+    Layout = "LayoutDoctor";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<body>
+    <h1>Información de paciente @Model.Nombre @Model.ApellidoPaterno</h1>
+
+    <h2>Información Personal</h2>
+    <ul>
+        <li><strong>Dni: </strong>@Model.Documento</li>
+        <li><strong>Nombre: </strong>@Model.Nombre</li>
+        <li><strong>Apellidos: </strong>@Model.ApellidoPaterno @Model.ApellidoMaterno</li>
+        <li><strong>Correo electrónico: </strong>@Model.Direccion</li>
+        <li><strong>Teléfono: </strong>@Model.Telefono</li>
+        <li><strong>Edad: </strong>@Model.Edad</li>
+        @if(Model.Estado == 0)
+        {
+            <a class="btn btn-primary" asp-action="RegistrarPacienteInvitado" asp-route-IdPaciente="@Model.Idpaciente">Crear cuenta paciente</a>
+        }
+    </ul>
+
+    <h2>Historial de Citas</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tratamiento</th>
+                <th>Doctor</th>
+                <th>Sede</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Duración (minutos)</th>
+                <th>Importe a Pagar (S/.)</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CitaDental item in Model.CitaDentals)
+            {
+                if (item.Estado != 3)
+                {
+                    <tr>
+                        <td>@item.IdtratamientoNavigation.Nombre</td>
+                        <td>@item.IddoctorNavigation.Nombre @item.IddoctorNavigation.ApellidoPaterno</td>
+                        <td>@item.IdsedeNavigation.Direccion</td>
+                        <td>@item.Fecha</td>
+                        <td>@item.Hora</td>
+                        <td>@item.Duracion</td>
+                        <td>@item.ImportePagar</td>
+                        @switch (item.Estado)
+                        {
+                            case 0:
+                                <td>Agendado</td>
+                                break;
+                            case 1:
+                                <td>Pagado</td>
+                                break;
+                            case 2:
+                                <td>Finalizado</td>
+                                break;
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</body>

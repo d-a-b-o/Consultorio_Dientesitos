@@ -24,12 +24,18 @@ namespace WebDientesitos.Controllers
         public IActionResult VerCitas()
         {
             ViewBag.CurrentPage = "VerCitas";
-            return View();
+            Paciente paciente = _paciente.getPaciente(HttpContext);
+            return View(_paciente.getCitas(paciente.Idpaciente));
         }
         public IActionResult VerHistorial()
         {
             ViewBag.CurrentPage = "VerHistorial";
-            return View();
+            Paciente paciente = _paciente.getPaciente(HttpContext);
+            return View(_paciente.getCitasFin(paciente.Idpaciente));
+        }
+        public IActionResult InfoCita(int IDCita)
+        {
+            return View(_paciente.getCitaDental(IDCita));
         }
         public IActionResult EditarPerfil()
         {
@@ -74,6 +80,41 @@ namespace WebDientesitos.Controllers
             paciente.Constrasena = _paciente.convertirSha256(contrasena);
             _paciente.editPaciente(paciente);
             return RedirectToAction("EditarPerfil", "Paciente");
+        }
+        public IActionResult ReservarCita()
+        {
+            return View(_paciente.getDatosCita());
+        }
+        [HttpPost]
+        public IActionResult ReservarCita(int sedeCod, int tratamientoCod, int doctorCod, String fecha, String hora)
+        {
+            Paciente paciente = _paciente.getPaciente(HttpContext);
+            _paciente.addCita(sedeCod, tratamientoCod, doctorCod, paciente.Idpaciente, fecha, hora);
+            return RedirectToAction("VerCitas");
+        }
+        public IActionResult EditarCita(int citaId)
+        {
+            if (_paciente.CompararFechas((DateTime)_paciente.getCitaDental(citaId).Fecha))
+            {
+                ViewData["Mensaje"] = "Fecha";
+            }
+            return View(_paciente.getDatosCita(citaId));
+        }
+        [HttpPost]
+        public IActionResult EditarCita(int citaId,DateTime fecha, TimeSpan hora)
+        {
+            CitaDental citaEdit = _paciente.getCitaDental(citaId);
+            citaEdit.Fecha = fecha;
+            citaEdit.Hora = hora;
+            _paciente.editCita(citaEdit);
+            return RedirectToAction("EditarCita", citaEdit.Idcita);
+        }
+        public IActionResult CancelarCita(int IDCita)
+        {
+            CitaDental cita = _paciente.getCitaDental(IDCita);
+            cita.Estado = 3;
+            _paciente.editCita(cita);
+            return RedirectToAction("VerCitas");
         }
     }
 }

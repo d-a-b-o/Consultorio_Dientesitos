@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<WebDientesitos.Models.Paciente>
+@{
     Layout = "LayoutDoctor";
 }
 <head>
@@ -10,9 +11,28 @@
         <p class="card-text">Aquí podrá registrar un nuevo paciente.</p>
     </div>
 </a>
-@if (!string.IsNullOrEmpty(ViewBag.AlertMessage))
-{
-    <div class="alert alert-info">
-        @ViewBag.AlertMessage
-    </div>
-}
+
+<div class="container">
+    <h1>Pacientes</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Dni</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Más Información</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Paciente item in Model)
+            {
+                <tr>
+                    <td>@item.Documento</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.ApellidoPaterno @item.ApellidoMaterno</td>
+                    <td><a class="btn btn-primary" asp-controller="Doctor" asp-action="MasInfoPacientes" asp-route-IDPaciente="@item.Idpaciente">Más Información</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

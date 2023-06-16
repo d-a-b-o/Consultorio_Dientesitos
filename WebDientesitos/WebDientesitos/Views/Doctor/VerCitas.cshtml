@@ -1,6 +1,52 @@
-﻿@{
+﻿@model IEnumerable<WebDientesitos.Models.CitaDental>
+@{
     Layout = "LayoutDoctor";
 }
 <head>
     <link rel="stylesheet" href="~/css/PintarBoton.css">
 </head>
+<a class="card btn" asp-controller="Doctor" asp-action="ReservarCita">
+    <div class="card-body">
+        <h5 class="card-title">Reservar cita</h5>
+        <p class="card-text">Aqui podrá reservar una cita.</p>
+    </div>
+</a>
+<div class="container">
+    <h1>Citas Pendientes</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tratamiento</th>
+                <th>Paciente</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Más información</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CitaDental item in Model)
+            {
+                if (item.Estado == 0 || item.Estado == 1)
+                {
+                    <tr>
+                        <td>@item.IdtratamientoNavigation.Nombre</td>
+                        <td>@item.IdpacienteNavigation.Nombre @item.IdpacienteNavigation.ApellidoPaterno</td>
+                        <td>@item.Fecha</td>
+                        <td>@item.Hora</td>
+                        @switch (item.Estado)
+                        {
+                            case 0:
+                                <td>Agendado</td>
+                                break;
+                            case 1:
+                                <td>Pagada</td>
+                                break;
+                        }
+                        <td><a class="btn btn-primary" asp-action="InfoCita" asp-route-IDCita="@item.Idcita">Más Información</a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

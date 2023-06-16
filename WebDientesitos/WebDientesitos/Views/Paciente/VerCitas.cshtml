@@ -1,6 +1,47 @@
-﻿@{
+﻿@model IEnumerable<WebDientesitos.Models.DatosVerCitas>
+@{
     Layout = "LayoutPaciente";
 }
 <head>
     <link rel="stylesheet" href="~/css/PintarBoton.css">
 </head>
+<a class="card btn" asp-controller="Paciente" asp-action="ReservarCita">
+    <div class="card-body">
+        <h5 class="card-title">Reservar cita</h5>
+        <p class="card-text">Aqui pdrá reservar una cita.</p>
+    </div>
+</a>
+<div class="container">
+    <h1>Citas reservadas</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tratamiento</th>
+                <th>Doctor</th>
+                <th>Sede</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Duración (minutos)</th>
+                <th>Importe a Pagar (S/.)</th>
+                <th>Estado</th>
+                <th>Editar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DatosVerCitas item in Model)
+            {
+                <tr>
+                    <td>@item.Tratamiento.Nombre</td>
+                    <td>@item.Doctor.Nombre @item.Doctor.ApellidoPaterno</td>
+                    <td>@item.Sede.Direccion</td>
+                    <td>@item.Fecha</td>
+                    <td>@item.Hora</td>
+                    <td>@item.Duracion</td>
+                    <td>@item.Importe</td>
+                    <td>@item.Estado</td>
+                    <td><a class="btn btn-primary" asp-Controller="Paciente" asp-action="EditarCita" asp-route-citaId="@item.IDCita">Editar</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

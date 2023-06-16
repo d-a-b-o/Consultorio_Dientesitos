@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -18,8 +19,10 @@ namespace WebDientesitos.Service.Repository
             String dni = "";
             if (claimDoctor.Identity.IsAuthenticated)
             {
-                dni = claimDoctor.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier)
-                    .Select(c => c.Value).SingleOrDefault();
+                dni = claimDoctor.Claims
+                    .Where(c => c.Type == ClaimTypes.NameIdentifier)
+                    .Select(c => c.Value)
+                    .SingleOrDefault();
             }
             return (from Doctor in conexion.Doctors
                     where Doctor.Dni == dni
@@ -30,36 +33,109 @@ namespace WebDientesitos.Service.Repository
             conexion.Update(docEdit);
             conexion.SaveChanges();
         }
-        public IEnumerable<Paciente> getAllPacientes()
+        public void editCita(CitaDental cita)
         {
-            throw new NotImplementedException();
+            conexion.Update(cita);
+            conexion.SaveChanges();
+        }
+        public CitaDental getCita(int IDCita)
+        {
+            return conexion.CitaDentals
+                    .Include(c => c.IdtratamientoNavigation)
+                    .Include(c => c.IdsedeNavigation)
+                    .Include(c => c.IdpacienteNavigation)
+                    .Where(c => c.Idcita == IDCita)
+                    .Single();
+        }
+        public void RegistrarCita(CitaDental cita)
+        {
+            conexion.CitaDentals.Add(cita);
+            conexion.SaveChanges();
+        }
+        public List<CitaDental> getCitasP(int IdPaciente)
+        {
+            return (from Citas in conexion.CitaDentals
+                    where Citas.Idpaciente == IdPaciente
+                    select Citas).ToList();
+        }
+        public CitaSimple getCitasPaciente(int IdPaciente)
+        {
+            CitaSimple lst = new CitaSimple();
+            return null;
+        }
+        public IEnumerable<Paciente> getAllPacientes(int IdDoctor)
+        {
+            List<Paciente> lstPacientes = new List<Paciente>();
+            List<Paciente> pacientes = conexion.Pacientes.ToList();
+            bool check = false;
+            foreach(Paciente paciente in pacientes)
+            {
+                List<CitaDental> lstCitas = getCitasP(paciente.Idpaciente);
+                foreach(CitaDental cita in lstCitas)
+                {
+                    if(cita.Iddoctor == IdDoctor)
+                    {
+                        check = true;
+                        break;
+                    }
+                }
+                if (check)
+                {
+                    lstPacientes.Add(paciente);
+                }
+                check = false;
+            }
+            return lstPacientes;
+        }
+        public DatosCitaDoctor getDatosCita(int idDoctor)
+        {
+            DatosCitaDoctor data = new DatosCitaDoctor();
+            data.Tratamientos = conexion.Tratamientos;
+            data.Pacientes = getAllPacientes(idDoctor).Where(c => c.Estado == 1);
+            data.Sedes = conexion.Sedes;
+            return data;
+        }
+        public IEnumerable<CitaDental> getCitas(int IdDoctor)
+        {
+            return conexion.CitaDentals
+                    .Include(c => c.IdtratamientoNavigation)
+                    .Include(c => c.IdpacienteNavigation)
+                    .Where(c => c.Iddoctor == IdDoctor)
+                    .Where(c => c.Estado != 3 && c.Estado != 4)
+                    .ToList();
+        }
+        public Paciente getPaciente(int IDPaciente)
+        {
+            return conexion.Pacientes
+                    .Include(c => c.CitaDentals)
+                    .Where(c => c.Idpaciente == IDPaciente)
+                    .Single();
         }
         public void addPaciente(Paciente paciente)
         {
             conexion.Pacientes.Add(paciente);
             conexion.SaveChanges();
         }
+        public void updatePaciente(Paciente paciente)
+        {
+            conexion.Update(paciente);
+            conexion.SaveChanges();
+        }
         public void EnviarCorreo(String destinatario, String asunto, String cuerpo)
         {
-            // Configuración del cliente SMTP
-            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587)
+            var cliente = new SmtpClient("smtp.gmail.com", 587)
             {
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("DientesitosWeb@gmail.com", "PREISF03C1M"),
-                EnableSsl = true
+                Credentials = new NetworkCredential("dientesitosweb@gmail.com", "yfqyatlzgvclibrw")
             };
 
-            // Crear el mensaje de correo electrónico
-            MailMessage mailMessage = new MailMessage
-            {
-                From = new MailAddress("DientesitosWeb@gmail.com"),
-                Subject = asunto,
-                Body = cuerpo
-            };
-            mailMessage.To.Add(new MailAddress(destinatario));
-
-            // Enviar el correo electrónico
-            smtpClient.Send(mailMessage);
+            var email = new MailMessage("dientesitosweb@gmail.com", destinatario);
+            email.Subject = asunto;
+            email.Body = cuerpo;
+            email.IsBodyHtml = false;
+            cliente.Send(email);
         }
         public String generarClaveTemp()
         {
