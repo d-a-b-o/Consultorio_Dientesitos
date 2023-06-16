@@ -1,7 +1,7 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
-nav {
-    background-color: #FFFFFF;
+/*nav {
+    background-color: #116A7B;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
@@ -43,9 +43,9 @@ nav {
         }
 
     nav .login-button {
-        background-color: #434343;
+        background-color: #C2DEDC;
         border: none;
-        color: #FFFFFF;
+        color: #C2DEDC;
         padding: 10px 20px;
         border-radius: 5px;
         text-decoration: none;
@@ -56,8 +56,8 @@ nav {
     }
 
 footer {
-    background-color: #434343;
-    color: #FFFFFF;
+    background-color: #116A7B;
+    color: #116A7B;
     padding: 20px;
     text-align: center;
-}
+}*/

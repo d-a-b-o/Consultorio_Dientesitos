@@ -1,0 +1,12 @@
+﻿body {
+    background: #ECE5C7;
+    background: linear-gradient(to right,#ECE5C7,#CDC2AE);
+}
+
+.bg {
+    background-image: url(../images/bg.jpg);
+    background-position: center center;
+}
+.bg2 {
+    background: #ECE5C7;
+}
