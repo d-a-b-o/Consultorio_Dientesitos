@@ -21,78 +21,60 @@ namespace WebDientesitos.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult IniciarSesion(String rol, String dni, String contrasena)
+        public IActionResult IniciarSesion(string rol, string dni, string contrasena)
         {
-            if(contrasena.Length == 7)
+            if (contrasena.Length == 7)
             {
-                Paciente pacienteTemp = _usuario.validarPaciente(dni, contrasena);
+                var pacienteTemp = _usuario.validarPaciente(dni, contrasena);
                 if (pacienteTemp != null)
                 {
-                    List<Claim> claims = new List<Claim>()
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, dni)
-                    };
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    AuthenticationProperties properties = new AuthenticationProperties()
-                    {
-                        AllowRefresh = true
-                    };
-                    HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        properties);
-                    return RedirectToAction("EditarContrasena", "Paciente");
+                    return IniciarSesionExitoso(rol, dni);
                 }
             }
             contrasena = _usuario.convertirSha256(contrasena);
             if (rol.Equals("doctor"))
             {
-                Doctor docTemp = _usuario.validarDoctor(dni, contrasena);
-                if(docTemp != null)
+                var docTemp = _usuario.validarDoctor(dni, contrasena);
+                if (docTemp != null)
                 {
-                    List<Claim> claims = new List<Claim>()
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, dni)
-                    };
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    AuthenticationProperties properties = new AuthenticationProperties()
-                    {
-                        AllowRefresh = true
-                    };
-                    HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        properties);
-                    return RedirectToAction("MenuDoctor", "Doctor");
+                    return IniciarSesionExitoso(rol, dni);
                 }
             }
             else
             {
-                Paciente pacienteTemp = _usuario.validarPaciente(dni, contrasena);
-                if(pacienteTemp != null && pacienteTemp.Estado == 1)
+                var pacienteTemp = _usuario.validarPaciente(dni, contrasena);
+                if (pacienteTemp != null && pacienteTemp.Estado == 1)
                 {
-                    List<Claim> claims = new List<Claim>()
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, dni)
-                    };
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    AuthenticationProperties properties = new AuthenticationProperties()
-                    {
-                        AllowRefresh = true
-                    };
-                    HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        properties);
-                    return RedirectToAction("MenuPaciente", "Paciente");
+                    return IniciarSesionExitoso(rol, dni);
                 }
             }
             ViewData["Mensaje"] = "No se encontraron coincidencias";
             return View();
         }
+        private IActionResult IniciarSesionExitoso(string rol, string dni)
+        {
+            var claims          = new List<Claim>() { new Claim(ClaimTypes.NameIdentifier, dni) };
+            var claimsIdentity  = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var properties      = new AuthenticationProperties() { AllowRefresh = true };
+
+            HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                properties);
+
+            if (rol.Equals("doctor"))
+            {
+                return RedirectToAction("MenuDoctor", "Doctor");
+            }
+            else
+            {
+                return RedirectToAction("MenuPaciente", "Paciente");
+            }
+        }
         public IActionResult CerrarSesion()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
             return RedirectToAction("Inicio", "Home");
         }
     }
