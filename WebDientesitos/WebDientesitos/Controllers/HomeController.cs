@@ -9,11 +9,13 @@ namespace WebDientesitos.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ICita _cita;
+        private readonly IPaciente _paciente;
 
-        public HomeController(ILogger<HomeController> logger, ICita cita)
+        public HomeController(ILogger<HomeController> logger, ICita cita, IPaciente paciente)
         {
             _logger = logger;
             _cita = cita;
+            _paciente = paciente;
         }
 
         public IActionResult Inicio()
@@ -34,16 +36,23 @@ namespace WebDientesitos.Controllers
         public IActionResult Cita()
         {
             ViewBag.CurrentPage = "Cita";
-            return View(_cita.GetDatosCita());
+            return View(_cita.getDatosCita());
         }
         public IActionResult ConfirmacionCita(CitaSinUser citaSinUser, int idSede, int idDoctor, int idTratamiento)
         {
-            citaSinUser.IdSede = idSede;
-            citaSinUser.IdDoctor = idDoctor;
-            citaSinUser.IdTratamiento = idTratamiento;
-            CitaDental citaTemp = _cita.prepareCitaSinUser(citaSinUser);
-            _cita.registrarCita(citaTemp);
-            return View();
+            var paciente = new Paciente();
+            paciente.Documento = citaSinUser.DniPaciente;
+            if (!_paciente.datosPacienteExisten(paciente))
+            {
+                citaSinUser.IdSede = idSede;
+                citaSinUser.IdDoctor = idDoctor;
+                citaSinUser.IdTratamiento = idTratamiento;
+                CitaDental citaTemp = _cita.prepareCitaSinUser(citaSinUser);
+                _cita.registrarCita(citaTemp);
+                return RedirectToAction("Inicio");
+            }
+            ViewData["Mensaje"] = "dni ya registrado";
+            return RedirectToAction("Cita");
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

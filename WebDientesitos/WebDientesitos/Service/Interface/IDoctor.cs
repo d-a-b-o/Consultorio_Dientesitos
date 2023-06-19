@@ -6,17 +6,11 @@ namespace WebDientesitos.Service.Interface
     {
         Doctor getDoctor(HttpContext httpContext);
         void editDoctor(Doctor docEdit);
-        void editCita(CitaDental cita);
-        CitaDental getCita(int IDCita);
-        List<CitaDental> getCitasP(int IdPaciente);
-        IEnumerable<Paciente> getAllPacientes(int IdDoctor);
-        IEnumerable<CitaDental> getCitas(int IdDoctor);
-        CitaSimple getCitasPaciente(int IdPaciente);
+        IEnumerable<Paciente> getPacientesXDoctor(int idDoctor);
+        Boolean hasCitaWithDoctor(int idPaciente, int idDoctor);
+        List<CitaDental> getCitasXPaciente(int IdPaciente);
+        IEnumerable<Paciente> getAllPacientes();
         DatosCitaDoctor getDatosCita(int idDoctor);
-        void RegistrarCita(CitaDental cita);
-        Paciente getPaciente(int IDPaciente);
-        void addPaciente(Paciente paciente);
-        void updatePaciente(Paciente paciente);
         String generarClaveTemp();
         String convertirSha256(String input);
         void EnviarCorreo(String destinatario, String asunto, String cuerpo);
