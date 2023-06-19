@@ -28,99 +28,69 @@ namespace WebDientesitos.Service.Repository
                     where Doctor.Dni == dni
                     select Doctor).Single();
         }
+
         public void editDoctor(Doctor docEdit)
         {
             conexion.Update(docEdit);
             conexion.SaveChanges();
         }
-        public void editCita(CitaDental cita)
-        {
-            conexion.Update(cita);
-            conexion.SaveChanges();
-        }
-        public CitaDental getCita(int IDCita)
+
+        public List<CitaDental> getCitasXPaciente(int IdPaciente)
         {
             return conexion.CitaDentals
-                    .Include(c => c.IdtratamientoNavigation)
-                    .Include(c => c.IdsedeNavigation)
-                    .Include(c => c.IdpacienteNavigation)
-                    .Where(c => c.Idcita == IDCita)
-                    .Single();
+                    .Where(cita => cita.Idpaciente == IdPaciente)
+                    .ToList();
         }
-        public void RegistrarCita(CitaDental cita)
+
+        public IEnumerable<Paciente> getPacientesXDoctor(int idDoctor)
         {
-            conexion.CitaDentals.Add(cita);
-            conexion.SaveChanges();
-        }
-        public List<CitaDental> getCitasP(int IdPaciente)
-        {
-            return (from Citas in conexion.CitaDentals
-                    where Citas.Idpaciente == IdPaciente
-                    select Citas).ToList();
-        }
-        public CitaSimple getCitasPaciente(int IdPaciente)
-        {
-            CitaSimple lst = new CitaSimple();
-            return null;
-        }
-        public IEnumerable<Paciente> getAllPacientes(int IdDoctor)
-        {
-            List<Paciente> lstPacientes = new List<Paciente>();
-            List<Paciente> pacientes = conexion.Pacientes.ToList();
-            bool check = false;
+            var lstPacientes    = new List<Paciente>();
+            var pacientes       = getAllPacientes();
+
             foreach(Paciente paciente in pacientes)
             {
-                List<CitaDental> lstCitas = getCitasP(paciente.Idpaciente);
-                foreach(CitaDental cita in lstCitas)
-                {
-                    if(cita.Iddoctor == IdDoctor)
-                    {
-                        check = true;
-                        break;
-                    }
-                }
-                if (check)
+                if(hasCitaWithDoctor(paciente.Idpaciente, idDoctor))
                 {
                     lstPacientes.Add(paciente);
                 }
-                check = false;
             }
+
             return lstPacientes;
         }
-        public DatosCitaDoctor getDatosCita(int idDoctor)
+
+        public Boolean hasCitaWithDoctor(int idPaciente, int idDoctor)
         {
-            DatosCitaDoctor data = new DatosCitaDoctor();
-            data.Tratamientos = conexion.Tratamientos;
-            data.Pacientes = getAllPacientes(idDoctor).Where(c => c.Estado == 1);
-            data.Sedes = conexion.Sedes;
-            return data;
+            var lstCitas = getCitasXPaciente(idPaciente);
+
+            foreach(CitaDental cita in lstCitas)
+            {
+                if(cita.Iddoctor == idDoctor)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
-        public IEnumerable<CitaDental> getCitas(int IdDoctor)
-        {
-            return conexion.CitaDentals
-                    .Include(c => c.IdtratamientoNavigation)
-                    .Include(c => c.IdpacienteNavigation)
-                    .Where(c => c.Iddoctor == IdDoctor)
-                    .Where(c => c.Estado != 3 && c.Estado != 4)
-                    .ToList();
-        }
-        public Paciente getPaciente(int IDPaciente)
+
+        public IEnumerable<Paciente> getAllPacientes()
         {
             return conexion.Pacientes
-                    .Include(c => c.CitaDentals)
-                    .Where(c => c.Idpaciente == IDPaciente)
-                    .Single();
+                    .ToList();
         }
-        public void addPaciente(Paciente paciente)
+
+        public DatosCitaDoctor getDatosCita(int idDoctor)
         {
-            conexion.Pacientes.Add(paciente);
-            conexion.SaveChanges();
+            var data            = new DatosCitaDoctor();
+            var lstPaciente     = getPacientesXDoctor(idDoctor);
+
+            data.Tratamientos   = conexion.Tratamientos;
+            data.Pacientes      = lstPaciente.Where(c => c.Estado == 1).ToList();
+            data.Sedes          = conexion.Sedes;
+
+            return data;
         }
-        public void updatePaciente(Paciente paciente)
-        {
-            conexion.Update(paciente);
-            conexion.SaveChanges();
-        }
+
         public void EnviarCorreo(String destinatario, String asunto, String cuerpo)
         {
             var cliente = new SmtpClient("smtp.gmail.com", 587)
@@ -137,6 +107,7 @@ namespace WebDientesitos.Service.Repository
             email.IsBodyHtml = false;
             cliente.Send(email);
         }
+
         public String generarClaveTemp()
         {
             String Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -148,6 +119,7 @@ namespace WebDientesitos.Service.Repository
                 return new String(bytes.Select(b => Characters[b % Characters.Length]).ToArray());
             }
         }
+
         public String convertirSha256(String input)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -164,6 +136,7 @@ namespace WebDientesitos.Service.Repository
                 return builder.ToString();
             }
         }
+
         public String mensajeClave(Paciente paciente)
         {
             return @"Estimado/a " + paciente.Nombre +@" "+ paciente.ApellidoPaterno + @",

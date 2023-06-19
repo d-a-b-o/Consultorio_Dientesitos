@@ -9,127 +9,142 @@ namespace WebDientesitos.Controllers
     [Authorize]
     public class DoctorController : Controller
     {
-        private readonly IDoctor _doctor;
-        public DoctorController(IDoctor doctor)
+        private readonly IDoctor    _doctor;
+        private readonly ICita      _cita;
+        private readonly IPaciente  _paciente;
+        public DoctorController(IDoctor doctor, ICita cita, IPaciente paciente)
         {
             _doctor = doctor;
+            _cita = cita;
+            _paciente = paciente;
         }
         public IActionResult MenuDoctor()
         {
             ViewBag.CurrentPage = "MenuDoctor";
-            Doctor doc = _doctor.getDoctor(HttpContext);
+            var doc             = _doctor.getDoctor(HttpContext);
 
             return View(doc);
         }
         public IActionResult VerPacientes()
         {
-            ViewBag.CurrentPage = "VerPacientes";
-            Doctor doc = _doctor.getDoctor(HttpContext);
-            var alerta = TempData["Mensaje"] as string;
-            ViewBag.AlertMessage = alerta;
-            return View(_doctor.getAllPacientes(doc.Iddoctor));
+            ViewBag.CurrentPage     = "VerPacientes";
+            var doc                 = _doctor.getDoctor(HttpContext);
+            ViewBag.AlertMessage    = TempData["Mensaje"] as string;
+
+            return View(_doctor.getPacientesXDoctor(doc.Iddoctor));
         }
         public IActionResult MasInfoPacientes(int IDPaciente)
         {
-            return View(_doctor.getPaciente(IDPaciente));
+            return View(_paciente.getPacienteXId(IDPaciente));
         }
         public IActionResult RegistrarPacienteInvitado(int IdPaciente)
         {
             ViewBag.CurrentPage = "VerPacientes";
-            Paciente paciente = _doctor.getPaciente(IdPaciente);
-            paciente.Estado = 1;
-            paciente.Constrasena = _doctor.generarClaveTemp();
-            String cuerpo = _doctor.mensajeClave(paciente);
+            var paciente        = _paciente.getPacienteXId(IdPaciente);
+
+            paciente.Estado         = 1;
+            paciente.Constrasena    = _doctor.generarClaveTemp();
+            var cuerpo              = _doctor.mensajeClave(paciente);
             _doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
-            paciente.Constrasena = paciente.Constrasena;
-            _doctor.updatePaciente(paciente);
+            paciente.Constrasena    = paciente.Constrasena;
+            _paciente.editPaciente(paciente);
+
             return RedirectToAction("VerPacientes"); ;
         }
         public IActionResult RegistrarPaciente()
         {
             ViewBag.CurrentPage = "VerPacientes";
+
             return View();
         }
         [HttpPost]
         public IActionResult RegistrarPaciente(Paciente paciente)
         {
-            ViewBag.CurrentPage = "VerPacientes";
-            paciente.Estado = 1;
-            paciente.Constrasena = _doctor.generarClaveTemp();
-            String cuerpo = _doctor.mensajeClave(paciente);
-            _doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
-            paciente.Constrasena = paciente.Constrasena;
-            _doctor.addPaciente(paciente);
-            return RedirectToAction("VerPacientes");
+            ViewBag.CurrentPage     = "VerPacientes";
+
+            if (!_paciente.datosPacienteExisten(paciente))
+            {
+                paciente.Estado = 1;
+                paciente.Constrasena = _doctor.generarClaveTemp();
+                var cuerpo = _doctor.mensajeClave(paciente);
+                _doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
+                paciente.Constrasena = paciente.Constrasena;
+                _paciente.addPaciente(paciente);
+
+                return RedirectToAction("VerPacientes");
+            }
+            ViewData["Mensaje"] = "dni ya registrado";
+            return RedirectToAction("RegistrarPaciente");
         }
         public IActionResult VerCitas()
         {
             ViewBag.CurrentPage = "VerCitas";
-            Doctor doc = _doctor.getDoctor(HttpContext);
-            return View(_doctor.getCitas(doc.Iddoctor));
+            var doc             = _doctor.getDoctor(HttpContext);
+
+            return View(_cita.getCitasXDoctor(doc.Iddoctor));
         }
         public IActionResult InfoCita(int IDCita)
         {
-            return View(_doctor.getCita(IDCita));
+            return View(_cita.getCitaDentalXId(IDCita));
         }
         public IActionResult FinalizarCita(int IDCita)
         {
-            CitaDental cita = _doctor.getCita(IDCita);
+            var cita    = _cita.getCitaDentalXId(IDCita);
+
             cita.Estado = 2;
-            _doctor.editCita(cita);
+            _cita.editCita(cita);
+
             return RedirectToAction("VerCitas");
         }
         public IActionResult ReservarCita()
         {
-            Doctor doc = _doctor.getDoctor(HttpContext);
+            var doc = _doctor.getDoctor(HttpContext);
+
             return View(_doctor.getDatosCita(doc.Iddoctor));
         }
         [HttpPost]
         public IActionResult ReservarCita(int idTratamiento, int idPaciente, int idSede, DateTime fecha, TimeSpan hora)
         {
-            CitaDental cita = new CitaDental();
-            Doctor doc = _doctor.getDoctor(HttpContext);
-            cita.Idtratamiento = idTratamiento;
-            cita.Iddoctor = doc.Iddoctor;
-            cita.Idpaciente = idPaciente;
-            cita.Idsede = idSede;
-            cita.Fecha = fecha;
-            cita.Hora = hora;
-            cita.Duracion = 30;
-            cita.ImportePagar = 300;
-            cita.Estado = 0;
+            var doc     = _doctor.getDoctor(HttpContext);
+            var cita    = _cita.createCitaDental(idSede, idTratamiento, doc.Iddoctor, idPaciente, fecha.ToString(), hora.ToString());
 
-            _doctor.RegistrarCita(cita);
+            _cita.registrarCita(cita);
+
             return RedirectToAction("VerCitas");
         }
         public IActionResult EditarPerfil()
         {
             ViewBag.CurrentPage = "EditarPerfil";
-            Doctor doc = _doctor.getDoctor(HttpContext);
+            var doc = _doctor.getDoctor(HttpContext);
+
             return View(doc);
         }
         [HttpPost]
         public IActionResult EditarPerfil(Doctor docEdit)
         {
             ViewBag.CurrentPage = "EditarPerfil";
-            Doctor doc = _doctor.getDoctor(HttpContext);
-            doc.Nombre = docEdit.Nombre;
-            doc.ApellidoPaterno = docEdit.ApellidoPaterno;
-            doc.ApellidoMaterno = docEdit.ApellidoPaterno;
+            var doc             = _doctor.getDoctor(HttpContext);
+
+            doc.Nombre              = docEdit.Nombre;
+            doc.ApellidoPaterno     = docEdit.ApellidoPaterno;
+            doc.ApellidoMaterno     = docEdit.ApellidoPaterno;
             doc.NumeroColegioMedico = docEdit.NumeroColegioMedico;
             _doctor.editDoctor(doc);
+
             return View(doc);
         }
         public IActionResult EditarContrasena()
         {
             ViewBag.CurrentPage = "EditarPerfil";
+
             return View();
         }
         [HttpPost]
         public IActionResult EditarContrasena(String contrasena, String contrasenaConfi)
         {
             ViewBag.CurrentPage = "EditarPerfil";
-            Doctor doc = _doctor.getDoctor(HttpContext);
+            var doc = _doctor.getDoctor(HttpContext);
+
             if (contrasena.Length < 8)
             {
                 ViewData["Mensaje"] = "tamaño";
@@ -142,6 +157,7 @@ namespace WebDientesitos.Controllers
             }
             doc.Constrasena = _doctor.convertirSha256(contrasena);
             _doctor.editDoctor(doc);
+
             return RedirectToAction("EditarPerfil", "Doctor");
         }
     }

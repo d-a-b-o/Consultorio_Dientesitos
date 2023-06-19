@@ -11,5 +11,9 @@ public partial class Tratamiento
 
     public string? Descripcion { get; set; }
 
+    public int? Duracion { get; set; }
+
+    public decimal? Precio { get; set; }
+
     public virtual ICollection<CitaDental> CitaDentals { get; set; } = new List<CitaDental>();
 }

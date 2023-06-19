@@ -10,63 +10,72 @@ namespace WebDientesitos.Controllers
     public class PacienteController : Controller
     {
         private readonly IPaciente _paciente;
-        public PacienteController(IPaciente paciente)
+        private readonly ICita _cita;
+        public PacienteController(IPaciente paciente, ICita cita)
         {
             _paciente = paciente;
+            _cita = cita;
         }
         public IActionResult MenuPaciente()
         {
             ViewBag.CurrentPage = "MenuPaciente";
-            Paciente paciente = _paciente.getPaciente(HttpContext);
+            var paciente        = _paciente.getPaciente(HttpContext);
 
             return View(paciente);
         }
         public IActionResult VerCitas()
         {
             ViewBag.CurrentPage = "VerCitas";
-            Paciente paciente = _paciente.getPaciente(HttpContext);
-            return View(_paciente.getCitas(paciente.Idpaciente));
+            var paciente        = _paciente.getPaciente(HttpContext);
+
+            return View(_cita.getDatosVerCitaXPaciente(paciente.Idpaciente, false));
         }
         public IActionResult VerHistorial()
         {
             ViewBag.CurrentPage = "VerHistorial";
-            Paciente paciente = _paciente.getPaciente(HttpContext);
-            return View(_paciente.getCitasFin(paciente.Idpaciente));
+            var paciente        = _paciente.getPaciente(HttpContext);
+
+            return View(_cita.getDatosVerCitaXPaciente(paciente.Idpaciente, true));
         }
         public IActionResult InfoCita(int IDCita)
         {
-            return View(_paciente.getCitaDental(IDCita));
+            return View(_cita.getCitaDentalXId(IDCita));
         }
         public IActionResult EditarPerfil()
         {
             ViewBag.CurrentPage = "EditarPerfil";
-            Paciente paciente = _paciente.getPaciente(HttpContext);
+            var paciente        = _paciente.getPaciente(HttpContext);
+
             return View(paciente);
         }
         [HttpPost]
         public IActionResult EditarPerfil(Paciente pacienteEdit)
         {
             ViewBag.CurrentPage = "EditarPerfil";
-            Paciente paciente = _paciente.getPaciente(HttpContext);
-            paciente.Nombre = pacienteEdit.Nombre;
-            paciente.ApellidoPaterno = pacienteEdit.ApellidoPaterno;
-            paciente.ApellidoMaterno = pacienteEdit.ApellidoMaterno;
-            paciente.Direccion = pacienteEdit.Direccion;
-            paciente.Telefono = pacienteEdit.Telefono;
-            paciente.Edad = pacienteEdit.Edad;
+            var paciente = _paciente.getPaciente(HttpContext);
+
+            paciente.Nombre             = pacienteEdit.Nombre;
+            paciente.ApellidoPaterno    = pacienteEdit.ApellidoPaterno;
+            paciente.ApellidoMaterno    = pacienteEdit.ApellidoMaterno;
+            paciente.Direccion          = pacienteEdit.Direccion;
+            paciente.Telefono           = pacienteEdit.Telefono;
+            paciente.Edad               = pacienteEdit.Edad;
             _paciente.editPaciente(paciente);
+
             return View(paciente);
         }
         public IActionResult EditarContrasena()
         {
             ViewBag.CurrentPage = "EditarPerfil";
+
             return View();
         }
         [HttpPost]
         public IActionResult EditarContrasena(String contrasena, String contrasenaConfi)
         {
             ViewBag.CurrentPage = "EditarPerfil";
-            Paciente paciente = _paciente.getPaciente(HttpContext);
+            var paciente        = _paciente.getPaciente(HttpContext);
+
             if (contrasena.Length < 8)
             {
                 ViewData["Mensaje"] = "tamaño";
@@ -79,41 +88,49 @@ namespace WebDientesitos.Controllers
             }
             paciente.Constrasena = _paciente.convertirSha256(contrasena);
             _paciente.editPaciente(paciente);
+
             return RedirectToAction("EditarPerfil", "Paciente");
         }
         public IActionResult ReservarCita()
         {
-            return View(_paciente.getDatosCita());
+            return View(_cita.getDatosCita());
         }
         [HttpPost]
         public IActionResult ReservarCita(int sedeCod, int tratamientoCod, int doctorCod, String fecha, String hora)
         {
-            Paciente paciente = _paciente.getPaciente(HttpContext);
-            _paciente.addCita(sedeCod, tratamientoCod, doctorCod, paciente.Idpaciente, fecha, hora);
+            var paciente    = _paciente.getPaciente(HttpContext);
+            var cita        = _cita.createCitaDental(sedeCod, tratamientoCod, doctorCod, paciente.Idpaciente, fecha, hora);
+
+            _cita.registrarCita(cita);
+
             return RedirectToAction("VerCitas");
         }
         public IActionResult EditarCita(int citaId)
         {
-            if (_paciente.CompararFechas((DateTime)_paciente.getCitaDental(citaId).Fecha))
+            if (_paciente.CompararFechas((DateTime)_cita.getCitaDentalXId(citaId).Fecha))
             {
                 ViewData["Mensaje"] = "Fecha";
             }
-            return View(_paciente.getDatosCita(citaId));
+            return View(_cita.getDatosCita(citaId));
         }
         [HttpPost]
-        public IActionResult EditarCita(int citaId,DateTime fecha, TimeSpan hora)
+        public IActionResult EditarCita(int citaId, String fecha, String hora)
         {
-            CitaDental citaEdit = _paciente.getCitaDental(citaId);
-            citaEdit.Fecha = fecha;
-            citaEdit.Hora = hora;
-            _paciente.editCita(citaEdit);
-            return RedirectToAction("EditarCita", citaEdit.Idcita);
+            var citaEdit    = _cita.getCitaDentalXId(citaId);
+
+            citaEdit.Fecha  = DateTime.Parse(fecha);
+            citaEdit.Hora   = TimeSpan.Parse(hora);
+            _cita.editCita(citaEdit);
+
+            return RedirectToAction("VerCitas");
         }
         public IActionResult CancelarCita(int IDCita)
         {
-            CitaDental cita = _paciente.getCitaDental(IDCita);
+            var cita = _cita.getCitaDentalXId(IDCita);
+
             cita.Estado = 3;
-            _paciente.editCita(cita);
+            _cita.editCita(cita);
+
             return RedirectToAction("VerCitas");
         }
     }
