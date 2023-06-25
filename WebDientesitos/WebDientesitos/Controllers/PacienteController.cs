@@ -11,10 +11,12 @@ namespace WebDientesitos.Controllers
     {
         private readonly IPaciente _paciente;
         private readonly ICita _cita;
-        public PacienteController(IPaciente paciente, ICita cita)
+        private readonly IUtility _utility;
+        public PacienteController(IPaciente paciente, ICita cita, IUtility utility)
         {
-            _paciente = paciente;
-            _cita = cita;
+            _paciente   = paciente;
+            _cita       = cita;
+            _utility    = utility; 
         }
         public IActionResult MenuPaciente()
         {
@@ -28,14 +30,14 @@ namespace WebDientesitos.Controllers
             ViewBag.CurrentPage = "VerCitas";
             var paciente        = _paciente.getPaciente(HttpContext);
 
-            return View(_cita.getDatosVerCitaXPaciente(paciente.Idpaciente, false));
+            return View(_cita.getCitasPendientesXPaciente(paciente.Idpaciente));
         }
         public IActionResult VerHistorial()
         {
             ViewBag.CurrentPage = "VerHistorial";
             var paciente        = _paciente.getPaciente(HttpContext);
 
-            return View(_cita.getDatosVerCitaXPaciente(paciente.Idpaciente, true));
+            return View(_cita.getCitasFinalizadasXPaciente(paciente.Idpaciente));
         }
         public IActionResult InfoCita(int IDCita)
         {
@@ -86,7 +88,7 @@ namespace WebDientesitos.Controllers
                 ViewData["Mensaje"] = "Coincidencia";
                 return View();
             }
-            paciente.Constrasena = _paciente.convertirSha256(contrasena);
+            paciente.Constrasena = _utility.convertirSha256(contrasena);
             _paciente.editPaciente(paciente);
 
             return RedirectToAction("EditarPerfil", "Paciente");

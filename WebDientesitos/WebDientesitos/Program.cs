@@ -19,6 +19,12 @@ builder.Services
 builder.Services
     .Add(new ServiceDescriptor(typeof(ICita),
         new CitaRepository()));
+builder.Services
+    .Add(new ServiceDescriptor(typeof(IUtility),
+        new UtilityRepository()));
+builder.Services
+    .Add(new ServiceDescriptor(typeof(IReporte),
+        new ReporteRepository()));
 
 builder.Services.AddControllersWithViews();
 

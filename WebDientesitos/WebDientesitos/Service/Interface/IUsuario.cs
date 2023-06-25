@@ -6,6 +6,5 @@ namespace WebDientesitos.Service.Interface
     {
         Doctor validarDoctor(String dni, String Contrasena);
         Paciente validarPaciente(String dni, String Contrasena);
-        String convertirSha256(String input);
     }
 }

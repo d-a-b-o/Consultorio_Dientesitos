@@ -12,11 +12,15 @@ namespace WebDientesitos.Controllers
         private readonly IDoctor    _doctor;
         private readonly ICita      _cita;
         private readonly IPaciente  _paciente;
-        public DoctorController(IDoctor doctor, ICita cita, IPaciente paciente)
+        private readonly IReporte   _reporte;
+        private readonly IUtility   _utility;
+        public DoctorController(IDoctor doctor, ICita cita, IPaciente paciente, IUtility utility, IReporte reporte)
         {
-            _doctor = doctor;
-            _cita = cita;
-            _paciente = paciente;
+            _doctor     = doctor;
+            _cita       = cita;
+            _paciente   = paciente;
+            _utility    = utility;
+            _reporte    = reporte;
         }
         public IActionResult MenuDoctor()
         {
@@ -31,7 +35,7 @@ namespace WebDientesitos.Controllers
             var doc                 = _doctor.getDoctor(HttpContext);
             ViewBag.AlertMessage    = TempData["Mensaje"] as string;
 
-            return View(_doctor.getPacientesXDoctor(doc.Iddoctor));
+            return View(_paciente.getPacientesXDoctor(doc.Iddoctor));
         }
         public IActionResult MasInfoPacientes(int IDPaciente)
         {
@@ -43,9 +47,8 @@ namespace WebDientesitos.Controllers
             var paciente        = _paciente.getPacienteXId(IdPaciente);
 
             paciente.Estado         = 1;
-            paciente.Constrasena    = _doctor.generarClaveTemp();
-            var cuerpo              = _doctor.mensajeClave(paciente);
-            _doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
+            paciente.Constrasena    = _utility.generarClaveTemporal();
+            _utility.enviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", _utility.mensajeCLaveCreada(paciente));
             paciente.Constrasena    = paciente.Constrasena;
             _paciente.editPaciente(paciente);
 
@@ -65,9 +68,8 @@ namespace WebDientesitos.Controllers
             if (!_paciente.datosPacienteExisten(paciente))
             {
                 paciente.Estado = 1;
-                paciente.Constrasena = _doctor.generarClaveTemp();
-                var cuerpo = _doctor.mensajeClave(paciente);
-                _doctor.EnviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", cuerpo);
+                paciente.Constrasena = _utility.generarClaveTemporal();
+                _utility.enviarCorreo(paciente.Direccion, "Acceso a cuenta en Dientesitos", _utility.mensajeCLaveCreada(paciente));
                 paciente.Constrasena = paciente.Constrasena;
                 _paciente.addPaciente(paciente);
 
@@ -122,8 +124,8 @@ namespace WebDientesitos.Controllers
         [HttpPost]
         public IActionResult EditarPerfil(Doctor docEdit)
         {
-            ViewBag.CurrentPage = "EditarPerfil";
-            var doc             = _doctor.getDoctor(HttpContext);
+            ViewBag.CurrentPage     = "EditarPerfil";
+            var doc                 = _doctor.getDoctor(HttpContext);
 
             doc.Nombre              = docEdit.Nombre;
             doc.ApellidoPaterno     = docEdit.ApellidoPaterno;
@@ -155,10 +157,17 @@ namespace WebDientesitos.Controllers
                 ViewData["Mensaje"] = "Coincidencia";
                 return View();
             }
-            doc.Constrasena = _doctor.convertirSha256(contrasena);
+            doc.Constrasena = _utility.convertirSha256(contrasena);
             _doctor.editDoctor(doc);
 
             return RedirectToAction("EditarPerfil", "Doctor");
+        }
+        public IActionResult GenerarReporte()
+        {
+            ViewBag.CurrentPage = "GenerarReporte";
+            var doc = _doctor.getDoctor(HttpContext);
+
+            return View(_reporte.getReporte(doc.Iddoctor));
         }
     }
 }

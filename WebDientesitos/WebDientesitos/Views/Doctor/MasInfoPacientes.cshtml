@@ -45,8 +45,8 @@
                         <td>@item.IdtratamientoNavigation.Nombre</td>
                         <td>@item.IddoctorNavigation.Nombre @item.IddoctorNavigation.ApellidoPaterno</td>
                         <td>@item.IdsedeNavigation.Direccion</td>
-                        <td>@item.Fecha</td>
-                        <td>@item.Hora</td>
+                        <td>@item.Fecha.ToString().Substring(0, 10)</td>
+                        <td>@item.Hora.ToString().Substring(0, 5)</td>
                         <td>@item.Duracion</td>
                         <td>@item.ImportePagar</td>
                         @switch (item.Estado)
