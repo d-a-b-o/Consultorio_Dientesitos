@@ -32,8 +32,8 @@
                     <tr>
                         <td>@item.IdtratamientoNavigation.Nombre</td>
                         <td>@item.IdpacienteNavigation.Nombre @item.IdpacienteNavigation.ApellidoPaterno</td>
-                        <td>@item.Fecha</td>
-                        <td>@item.Hora</td>
+                        <td>@item.Fecha.ToString().Substring(0, 10)</td>
+                        <td>@item.Hora.ToString().Substring(0, 5)</td>
                         @switch (item.Estado)
                         {
                             case 0:

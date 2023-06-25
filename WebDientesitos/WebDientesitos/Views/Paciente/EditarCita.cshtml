@@ -34,7 +34,7 @@
 
             <div class="form-group">
                 <label for="fecha">Fecha</label>
-                <input type="date" class="form-control" name="fecha" min="@Model.fecha.AddDays(7).ToString("yyyy-MM-dd")" value="@Model.fecha.ToString("yyyy-MM-dd")">
+                <input type="date" class="form-control" name="fecha" min="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString(" yyyy-MM-dd")">
             </div>
 
             <div class="form-group">

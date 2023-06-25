@@ -12,9 +12,11 @@ namespace WebDientesitos.Controllers
     public class UsuarioController : Controller
     {
         private readonly IUsuario _usuario;
-        public UsuarioController(IUsuario usuario)
+        private readonly IUtility _utility;
+        public UsuarioController(IUsuario usuario, IUtility utility)
         {
             _usuario = usuario;
+            _utility = utility;
         }
         public IActionResult IniciarSesion()
         {
@@ -31,7 +33,7 @@ namespace WebDientesitos.Controllers
                     return IniciarSesionExitoso(rol, dni);
                 }
             }
-            contrasena = _usuario.convertirSha256(contrasena);
+            contrasena = _utility.convertirSha256(contrasena);
             if (rol.Equals("doctor"))
             {
                 var docTemp = _usuario.validarDoctor(dni, contrasena);

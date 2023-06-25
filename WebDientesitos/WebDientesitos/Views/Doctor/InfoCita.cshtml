@@ -11,8 +11,8 @@
     <h2>Detalles de la cita</h2>
     <ul>
         <li><strong>Sede: </strong>@Model.IdsedeNavigation.Direccion</li>
-        <li><strong>Fecha: </strong>@Model.Fecha</li>
-        <li><strong>Hora: </strong>@Model.Hora</li>
+        <li><strong>Fecha: </strong>@Model.Fecha.ToString().Substring(0, 10)</li>
+        <li><strong>Hora: </strong>@Model.Hora.ToString().Substring(0, 5)</li>
         <li><strong>Duración: </strong>@Model.Duracion</li>
         <li><strong>Odontólogo: </strong> Dr. @Model.IddoctorNavigation.Nombre @Model.IddoctorNavigation.ApellidoPaterno</li>
         <li><strong>Importe: </strong>S/@Model.ImportePagar</li>

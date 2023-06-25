@@ -1,0 +1,158 @@
+﻿@model WebDientesitos.Models.Reporte;
+@{
+    Layout = "LayoutDoctor";
+}
+<head>
+    <link rel="stylesheet" href="~/css/PintarBoton.css">
+</head>
+<div>
+    <h1>REPORTE</h1>
+</div>
+<div class="form-row">
+    <div class="form-group col-md">
+        <label for="tratamiento">Tratamiento</label>
+        <select class="form-control" name="tratamiento" id="tratamiento">
+            <option value="All">All</option>
+            @foreach (Tratamiento item in Model.Tratamientos)
+            {
+                <option value="@item.Nombre">@item.Nombre</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md">
+        <label for="paciente">Paciente</label>
+        <select class="form-control" name="paciente" id="paciente">
+            <option value="All">All</option>
+            @foreach (Paciente item in Model.Pacientes)
+            {
+                <option value="@item.Nombre @item.ApellidoPaterno">@item.Nombre @item.ApellidoPaterno</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md">
+        <label for="estado">Estado</label>
+        <select class="form-control" name="estado" id="estado">
+            <option value="All">All</option>
+            <option value="Agendado">Agendado</option>
+            <option value="Pagado">Pagado</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Cancelado">Cancelado</option>
+        </select>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md">
+        <label for="anio">Año</label>
+        <select class="form-control" name="anio" id="anio">
+            <option value="All">All</option>
+            @for (int i = DateTime.Now.Year - 5; i <= DateTime.Now.Year; i++)
+            {
+                <option value="@i">@i</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md">
+        <label for="mes">Mes</label>
+        <select class="form-control" name="mes" id="mes">
+            <option value="All">All</option>
+            <option value="01">Enero</option>
+            <option value="02">Febrero</option>
+            <option value="03">Marzo</option>
+            <option value="04">Abril</option>
+            <option value="05">Mayo</option>
+            <option value="06">Junio</option>
+            <option value="07">Julio</option>
+            <option value="08">Agosto</option>
+            <option value="09">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+        </select>
+    </div>
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tratamiento</th>
+                <th>Paciente</th>
+                <th>Sede</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CitaDental item in Model.CitasDentales)
+            {
+                <tr class="cita-row">
+                    <td>@item.IdtratamientoNavigation.Nombre</td>
+                    <td>@item.IdpacienteNavigation.Nombre @item.IdpacienteNavigation.ApellidoPaterno</td>
+                    <td>@item.IdsedeNavigation.Direccion</td>
+                    <td>@item.Fecha.ToString().Substring(0, 10)</td>
+                    @switch (@item.Estado)
+                    {
+                        case 0:
+                            <td>Agendado</td>
+                            break;
+                        case 1:
+                            <td>Pagado</td>
+                            break;
+                        case 2:
+                            <td>Finalizado</td>
+                            break;
+                        case 3:
+                            <td>Cancelado</td>
+                            break;
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('tratamiento').addEventListener('change', applyFilters);
+    document.getElementById('paciente').addEventListener('change', applyFilters);
+    document.getElementById('estado').addEventListener('change', applyFilters);
+    document.getElementById('mes').addEventListener('change', applyFilters);
+    document.getElementById('anio').addEventListener('change', applyFilters);
+
+    function applyFilters() {
+        var selectedTratamiento = document.getElementById('tratamiento').value;
+        var selectedPaciente = document.getElementById('paciente').value;
+        var selectedEstado = document.getElementById('estado').value;
+        var selectedMes = document.getElementById('mes').value;
+        var selectedAnio = document.getElementById('anio').value;
+
+        var rows = document.querySelectorAll('.cita-row');
+
+        rows.forEach(function (row) {
+            var tratamiento = row.querySelector('td:first-child').textContent.trim();
+            var paciente = row.querySelector('td:nth-child(2)').textContent.trim();
+            var estado = row.querySelector('td:last-child').textContent.trim();
+            var fecha = row.querySelector('td:nth-child(4)').textContent.trim();
+            if(fecha.length == 10){
+                var mes = row.querySelector('td:nth-child(4)').textContent.trim().substring(3, 5);
+                var anio = row.querySelector('td:nth-child(4)').textContent.trim().substring(6, 10);
+            }else{
+                var mes = row.querySelector('td:nth-child(4)').textContent.trim().substring(2, 4);
+                var anio = row.querySelector('td:nth-child(4)').textContent.trim().substring(5, 9);
+            }
+
+            var tratamientoMatch = selectedTratamiento === 'All' || tratamiento === selectedTratamiento;
+            var pacienteMatch = selectedPaciente === 'All' || paciente === selectedPaciente;
+            var estadoMatch = selectedEstado === 'All' || estado === selectedEstado;
+            var mesMatch = selectedMes === 'All' || mes === selectedMes;
+            var anioMatch = selectedAnio === 'All' || anio === selectedAnio;
+
+            if (tratamientoMatch && pacienteMatch && estadoMatch && mesMatch && anioMatch) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+

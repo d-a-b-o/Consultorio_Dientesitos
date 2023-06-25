@@ -10,6 +10,7 @@ namespace WebDientesitos.Service.Repository
     public class PacienteRepository : IPaciente
     {
         private DientesitosC conexion = new DientesitosC();
+        private CitaRepository _cita = new CitaRepository();
 
         public Paciente getPaciente(HttpContext httpContext)
         {
@@ -50,6 +51,37 @@ namespace WebDientesitos.Service.Repository
             return false;
         }
 
+        public IEnumerable<Paciente> getPacientesXDoctor(int idDoctor)
+        {
+            var lstPacientes = new List<Paciente>();
+            var pacientes = getAllPacientes();
+
+            foreach (Paciente paciente in pacientes)
+            {
+                if (hasCitaWithDoctor(paciente.Idpaciente, idDoctor))
+                {
+                    lstPacientes.Add(paciente);
+                }
+            }
+
+            return lstPacientes;
+        }
+
+        public Boolean hasCitaWithDoctor(int idPaciente, int idDoctor)
+        {
+            var lstCitas = _cita.getCitasXPaciente(idPaciente);
+
+            foreach (CitaDental cita in lstCitas)
+            {
+                if (cita.Iddoctor == idDoctor)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public Paciente getPacienteXId(int idPaciente)
         {
             return conexion.Pacientes
@@ -76,23 +108,6 @@ namespace WebDientesitos.Service.Repository
             int diferenciaEnDias    = Math.Abs(diferencia.Days);
 
             return diferenciaEnDias <= 7;
-        }
-
-        public String convertirSha256(String input)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] inputBytes   = Encoding.UTF8.GetBytes(input);
-                byte[] hashBytes    = sha256.ComputeHash(inputBytes);
-
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    builder.Append(hashBytes[i].ToString("x2"));
-                }
-
-                return builder.ToString();
-            }
         }
     }
 }

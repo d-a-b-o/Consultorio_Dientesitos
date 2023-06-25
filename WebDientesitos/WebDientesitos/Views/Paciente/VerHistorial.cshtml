@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebDientesitos.Models.DatosVerCitas>
+﻿@model IEnumerable<WebDientesitos.Models.CitaDental>
 @{
     Layout = "LayoutPaciente";
 }
@@ -11,6 +11,7 @@
         <thead>
             <tr>
                 <th>Tratamiento</th>
+                <th>Doctor</th>
                 <th>Fecha</th>
                 <th>Hora</th>
                 <th>Estado</th>
@@ -18,14 +19,23 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (DatosVerCitas item in Model)
+            @foreach (CitaDental item in Model)
             {
                 <tr>
-                    <td>@item.Tratamiento.Nombre</td>
-                    <td>@item.Fecha</td>
-                    <td>@item.Hora</td>
-                    <td>@item.Estado</td>
-                    <td><a class="btn btn-primary" asp-controller="Paciente" asp-action="InfoCita" asp-route-IDCita="@item.IDCita">Más Información</a></td>
+                    <td>@item.IdtratamientoNavigation.Nombre</td>
+                    <td>@item.IddoctorNavigation.Nombre @item.IddoctorNavigation.ApellidoPaterno</td>
+                    <td>@item.Fecha.ToString().Substring(0, 10)</td>
+                    <td>@item.Hora.ToString().Substring(0, 5)</td>
+                    @switch (@item.Estado)
+                    {
+                        case 2:
+                            <td>Finalizado</td>
+                            break;
+                        case 3:
+                            <td>Cancelado</td>
+                            break;
+                    }
+                    <td><a class="btn btn-primary" asp-controller="Paciente" asp-action="InfoCita" asp-route-IDCita="@item.Idcita">Más Información</a></td>
                 </tr>
             }
         </tbody>

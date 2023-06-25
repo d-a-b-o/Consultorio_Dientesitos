@@ -29,6 +29,9 @@
                     <li class="nav-item">
                         <a class="nav-link @(ViewBag.CurrentPage == "EditarPerfil" ? "active rounded" : "")" asp-controller="Doctor" asp-action="EditarPerfil">Editar Perfil</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.CurrentPage == "GenerarReporte" ? "active rounded" : "")" asp-controller="Doctor" asp-action="GenerarReporte">Reportes</a>
+                    </li>
                 </ul>
             </div>
             <div class="ml-auto">

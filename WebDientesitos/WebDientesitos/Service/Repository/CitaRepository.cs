@@ -118,6 +118,18 @@ namespace WebDientesitos.Service.Repository
                     .Where(cita => cita.Idpaciente == idPaciente)
                     .ToList();
         }
+        public IEnumerable<CitaDental> getCitasPendientesXPaciente(int idPaciente)
+        {
+            return getCitasXPaciente(idPaciente)
+                    .Where(c => c.Estado == 0 || c.Estado == 1)
+                    .ToList();
+        }
+        public IEnumerable<CitaDental> getCitasFinalizadasXPaciente(int idPaciente)
+        {
+            return getCitasXPaciente(idPaciente)
+                    .Where(c => c.Estado == 2 || c.Estado == 3)
+                    .ToList();
+        }
         public IEnumerable<CitaDental> getCitasXDoctor(int idDoctor)
         {
             return conexion.CitaDentals
@@ -126,40 +138,8 @@ namespace WebDientesitos.Service.Repository
                     .Include(c => c.IdpacienteNavigation)
                     .Include(c => c.IddoctorNavigation)
                     .Where(c => c.Iddoctor == idDoctor)
-                    .Where(c => c.Estado != 3 && c.Estado != 4)
+                    .Where(c => c.Estado != 2 || c.Estado != 3)
                     .ToList();
-        }
-
-        public IEnumerable<DatosVerCitas> getDatosVerCitaXPaciente(int idPaciente, Boolean finalizadas)
-        {
-            var lstCitas = getCitasXPaciente(idPaciente);
-            var lstVer = new List<DatosVerCitas>();
-
-            foreach (var cita in lstCitas)
-            {
-                var temp = createDatosVerCitas(cita);
-                temp.Estado = getEstadoCita((int)cita.Estado);
-
-                if (isCitaValid(temp.Estado, finalizadas)) { lstVer.Add(temp); }
-            }
-
-            return lstVer;
-        }
-
-        public DatosVerCitas createDatosVerCitas(CitaDental cita)
-        {
-            var temp            = new DatosVerCitas();
-
-            temp.IDCita         = cita.Idcita;
-            temp.Tratamiento    = getTratamientoXId((int)cita.Idtratamiento);
-            temp.Doctor         = getDoctorXId((int)cita.Iddoctor);
-            temp.Sede           = getSedeXId((int)cita.Idsede);
-            temp.Fecha          = cita.Fecha.ToString().Substring(0, 10);
-            temp.Hora           = cita.Hora.ToString();
-            temp.Duracion       = cita.Duracion.ToString();
-            temp.Importe        = cita.ImportePagar.ToString();
-
-            return temp;
         }
 
         public Tratamiento getTratamientoXId(int idTratamiento)
@@ -167,43 +147,6 @@ namespace WebDientesitos.Service.Repository
             return conexion.Tratamientos
                     .Where(tratamiento => tratamiento.Idtratamiento == idTratamiento)
                     .Single();
-        }
-
-        public Doctor getDoctorXId(int idDoctor)
-        {
-            return conexion.Doctors
-                    .Where(doctor => doctor.Iddoctor == idDoctor)
-                    .Single();
-        }
-
-        public Sede getSedeXId(int idSede)
-        {
-            return conexion.Sedes
-                    .Where(sede => sede.Idsede == idSede)
-                    .Single();
-        }
-
-        public String getEstadoCita(int estado)
-        {
-            switch (estado)
-            {
-                case 0:
-                    return "Agendado";
-                case 1:
-                    return "Pagada";
-                case 2:
-                    return "Finalizado";
-                case 3:
-                    return "Cancelado";
-                default:
-                    return string.Empty;
-            }
-        }
-
-        public Boolean isCitaValid(string estado, bool finalizadas)
-        {
-            if (finalizadas) { return estado == "Finalizado" || estado == "Cancelado"; }
-            else { return estado == "Agendado" || estado == "Pagada"; }
         }
     }
 }

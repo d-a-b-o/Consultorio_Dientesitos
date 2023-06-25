@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebDientesitos.Models.DatosVerCitas>
+﻿@model IEnumerable<WebDientesitos.Models.CitaDental>
 @{
     Layout = "LayoutPaciente";
 }
@@ -28,18 +28,26 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (DatosVerCitas item in Model)
+            @foreach (CitaDental item in Model)
             {
                 <tr>
-                    <td>@item.Tratamiento.Nombre</td>
-                    <td>@item.Doctor.Nombre @item.Doctor.ApellidoPaterno</td>
-                    <td>@item.Sede.Direccion</td>
-                    <td>@item.Fecha</td>
-                    <td>@item.Hora</td>
+                    <td>@item.IdtratamientoNavigation.Nombre</td>
+                    <td>@item.IddoctorNavigation.Nombre @item.IddoctorNavigation.ApellidoPaterno</td>
+                    <td>@item.IdsedeNavigation.Direccion</td>
+                    <td>@item.Fecha.ToString().Substring(0, 10)</td>
+                    <td>@item.Hora.ToString().Substring(0, 5)</td>
                     <td>@item.Duracion</td>
-                    <td>@item.Importe</td>
-                    <td>@item.Estado</td>
-                    <td><a class="btn btn-primary" asp-Controller="Paciente" asp-action="EditarCita" asp-route-citaId="@item.IDCita">Editar</a></td>
+                    <td>@item.ImportePagar</td>
+                    @switch (@item.Estado)
+                    {
+                        case 0:
+                            <td>Agendado</td>
+                            break;
+                        case 1:
+                            <td>Pagado</td>
+                            break;
+                    }
+                    <td><a class="btn btn-primary" asp-Controller="Paciente" asp-action="EditarCita" asp-route-citaId="@item.Idcita">Editar</a></td>
                 </tr>
             }
         </tbody>

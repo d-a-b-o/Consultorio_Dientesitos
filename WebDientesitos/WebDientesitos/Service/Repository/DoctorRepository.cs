@@ -11,7 +11,8 @@ namespace WebDientesitos.Service.Repository
 {
     public class DoctorRepository : IDoctor
     {
-        private DientesitosC conexion = new DientesitosC();
+        private DientesitosC conexion           = new DientesitosC();
+        private PacienteRepository _paciente    = new PacienteRepository();
 
         public Doctor getDoctor(HttpContext httpContext)
         {
@@ -24,9 +25,10 @@ namespace WebDientesitos.Service.Repository
                     .Select(c => c.Value)
                     .SingleOrDefault();
             }
-            return (from Doctor in conexion.Doctors
-                    where Doctor.Dni == dni
-                    select Doctor).Single();
+
+            return conexion.Doctors
+                    .Where(doctor => doctor.Dni == dni)
+                    .Single();
         }
 
         public void editDoctor(Doctor docEdit)
@@ -35,136 +37,16 @@ namespace WebDientesitos.Service.Repository
             conexion.SaveChanges();
         }
 
-        public List<CitaDental> getCitasXPaciente(int IdPaciente)
-        {
-            return conexion.CitaDentals
-                    .Where(cita => cita.Idpaciente == IdPaciente)
-                    .ToList();
-        }
-
-        public IEnumerable<Paciente> getPacientesXDoctor(int idDoctor)
-        {
-            var lstPacientes    = new List<Paciente>();
-            var pacientes       = getAllPacientes();
-
-            foreach(Paciente paciente in pacientes)
-            {
-                if(hasCitaWithDoctor(paciente.Idpaciente, idDoctor))
-                {
-                    lstPacientes.Add(paciente);
-                }
-            }
-
-            return lstPacientes;
-        }
-
-        public Boolean hasCitaWithDoctor(int idPaciente, int idDoctor)
-        {
-            var lstCitas = getCitasXPaciente(idPaciente);
-
-            foreach(CitaDental cita in lstCitas)
-            {
-                if(cita.Iddoctor == idDoctor)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public IEnumerable<Paciente> getAllPacientes()
-        {
-            return conexion.Pacientes
-                    .ToList();
-        }
-
         public DatosCitaDoctor getDatosCita(int idDoctor)
         {
             var data            = new DatosCitaDoctor();
-            var lstPaciente     = getPacientesXDoctor(idDoctor);
+            var lstPaciente     = _paciente.getPacientesXDoctor(idDoctor);
 
             data.Tratamientos   = conexion.Tratamientos;
             data.Pacientes      = lstPaciente.Where(c => c.Estado == 1).ToList();
             data.Sedes          = conexion.Sedes;
 
             return data;
-        }
-
-        public void EnviarCorreo(String destinatario, String asunto, String cuerpo)
-        {
-            var cliente = new SmtpClient("smtp.gmail.com", 587)
-            {
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("dientesitosweb@gmail.com", "yfqyatlzgvclibrw")
-            };
-
-            var email = new MailMessage("dientesitosweb@gmail.com", destinatario);
-            email.Subject = asunto;
-            email.Body = cuerpo;
-            email.IsBodyHtml = false;
-            cliente.Send(email);
-        }
-
-        public String generarClaveTemp()
-        {
-            String Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                var bytes = new byte[7];
-                rng.GetBytes(bytes);
-
-                return new String(bytes.Select(b => Characters[b % Characters.Length]).ToArray());
-            }
-        }
-
-        public String convertirSha256(String input)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-                byte[] hashBytes = sha256.ComputeHash(inputBytes);
-
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    builder.Append(hashBytes[i].ToString("x2"));
-                }
-
-                return builder.ToString();
-            }
-        }
-
-        public String mensajeClave(Paciente paciente)
-        {
-            return @"Estimado/a " + paciente.Nombre +@" "+ paciente.ApellidoPaterno + @",
-
-Esperamos que este correo le encuentre bien. Como parte del equipo de Dientesitos, su consultorio odontológico de confianza, nos complace brindarle acceso a su cuenta en nuestra plataforma web.
-
-Hemos generado una clave temporal para su cuenta, la cual le permitirá acceder a nuestros servicios en línea. Le recordamos que es de vital importancia que cambie esta contraseña temporal cuando inicie sesión por primera vez. Esto ayudará a garantizar la seguridad de su cuenta y proteger su información personal.
-
-A continuación, le proporcionamos los detalles necesarios para iniciar sesión en su cuenta:
-
-Opción de inicio de sesión: Paciente
-DNI: [Su número de DNI]
-Contraseña temporal: "+paciente.Constrasena+@"
-
-Por favor, siga los pasos a continuación para iniciar sesión por primera vez:
-
-1. Acceda a nuestro sitio web en [URL del sitio web].
-2. Seleccione la opción ""Paciente"" en la página de inicio de sesión.
-3. Ingrese su número de DNI y la contraseña temporal proporcionada arriba.
-4. Una vez iniciada la sesión, se le pedirá que cambie su contraseña temporal. Asegúrese de elegir una contraseña segura y que sea fácil de recordar.
-
-Si tiene alguna pregunta o necesita asistencia adicional, no dude en comunicarse con nuestro equipo de soporte al cliente. Estamos aquí para ayudarlo en todo momento.
-
-Agradecemos su confianza en Dientesitos y esperamos poder brindarle una experiencia odontológica excepcional en nuestra plataforma web.
-
-¡Saludos cordiales!
-
-Equipo de Dientesitos";
         }
     }
 }
